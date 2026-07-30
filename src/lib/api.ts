@@ -15,6 +15,17 @@ const api = axios.create({
 
 // Request interceptor: attach auth token
 api.interceptors.request.use(async (config) => {
+  // Check for mock session first
+  const mockSessionStr = localStorage.getItem('sip_desa_mock_session')
+  if (mockSessionStr) {
+    const mockSession = JSON.parse(mockSessionStr)
+    if (mockSession?.user?.id) {
+      config.headers.Authorization = `Bearer ${mockSession.user.id}`
+      return config
+    }
+  }
+
+  // Fallback to Supabase session
   const { data: { session } } = await supabase.auth.getSession()
   if (session?.access_token) {
     config.headers.Authorization = `Bearer ${session.access_token}`

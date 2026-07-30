@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Users, FileText, Newspaper, TrendingUp, ArrowUpRight, ArrowDownRight } from 'lucide-vue-next'
+import api from '@/lib/api'
 
 const stats = ref([
   { label: 'Total Penduduk', value: '3.247', change: '+12', trend: 'up', icon: Users, color: 'primary' },
@@ -27,6 +28,38 @@ const statusLabels: Record<string, string> = {
   approved: 'Disetujui',
   rejected: 'Ditolak',
 }
+
+onMounted(async () => {
+  try {
+    const response = await api.get('/dashboard/stats')
+    if (response.data?.success && response.data?.data) {
+      const serverStats = response.data.data
+      stats.value = [
+        { label: 'Total Penduduk', value: String(serverStats.total_residents ?? 0), change: '+12', trend: 'up', icon: Users, color: 'primary' },
+        { label: 'Surat Pending', value: String(serverStats.total_letters_pending ?? 0), change: '-5', trend: 'down', icon: FileText, color: 'warm' },
+        { label: 'Surat Selesai', value: String(serverStats.total_letters_completed ?? 0), change: '+48', trend: 'up', icon: FileText, color: 'accent' },
+        { label: 'Artikel Berita', value: String(serverStats.total_news ?? 0), change: '+3', trend: 'up', icon: Newspaper, color: 'primary' },
+      ]
+    }
+  } catch (err) {
+    console.warn('Gagal memuat stats dari server, menggunakan fallback data simulasi:', err)
+  }
+
+  try {
+    const lettersResponse = await api.get('/letters')
+    if (lettersResponse.data?.success && Array.isArray(lettersResponse.data?.data)) {
+      recentLetters.value = lettersResponse.data.data.slice(0, 5).map((l: any) => ({
+        id: l.id,
+        requester: l.profile?.full_name || l.requester_id || 'Warga',
+        type: l.letter_type,
+        date: l.created_at,
+        status: l.status,
+      }))
+    }
+  } catch (err) {
+    console.warn('Gagal memuat surat terbaru dari server, menggunakan fallback data simulasi:', err)
+  }
+})
 </script>
 
 <template>

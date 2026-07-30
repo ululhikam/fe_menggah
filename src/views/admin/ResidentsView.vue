@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { Users, Search, Plus, Edit, Trash2 } from 'lucide-vue-next'
+import api from '@/lib/api'
 
 const searchQuery = ref('')
+const loading = ref(false)
+
 const residents = ref([
   { id: '1', nik: '3501234567890001', name: 'Ahmad Fauzi', gender: 'L', age: 45, occupation: 'Petani', address: 'RT 01 / RW 02' },
   { id: '2', nik: '3501234567890002', name: 'Siti Aminah', gender: 'P', age: 38, occupation: 'Pedagang', address: 'RT 01 / RW 02' },
@@ -10,6 +13,46 @@ const residents = ref([
   { id: '4', nik: '3501234567890004', name: 'Dewi Kartika', gender: 'P', age: 29, occupation: 'Guru', address: 'RT 02 / RW 03' },
   { id: '5', nik: '3501234567890005', name: 'Eko Prasetyo', gender: 'L', age: 34, occupation: 'Wiraswasta', address: 'RT 04 / RW 01' },
 ])
+
+async function fetchResidents() {
+  try {
+    loading.value = true
+    const response = await api.get('/residents', {
+      params: {
+        search: searchQuery.value || undefined,
+        per_page: 50
+      }
+    })
+    if (response.data?.success && response.data?.data?.items) {
+      const items = response.data.data.items
+      residents.value = items.map((r: any) => ({
+        id: r.id,
+        nik: r.nik || '-',
+        name: r.full_name || 'Tidak ada nama',
+        gender: r.gender === 'laki-laki' ? 'L' : 'P',
+        age: r.birth_date ? new Date().getFullYear() - new Date(r.birth_date).getFullYear() : 0,
+        occupation: r.occupation || '-',
+        address: r.address || '-'
+      }))
+    }
+  } catch (err) {
+    console.warn('Gagal memuat daftar penduduk dari server, menggunakan fallback data simulasi:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+let timeoutId: any = null
+watch(searchQuery, () => {
+  if (timeoutId) clearTimeout(timeoutId)
+  timeoutId = setTimeout(() => {
+    fetchResidents()
+  }, 300)
+})
+
+onMounted(() => {
+  fetchResidents()
+})
 </script>
 
 <template>

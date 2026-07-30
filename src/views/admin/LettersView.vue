@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { FileText, Search, CheckCircle, XCircle, Eye } from 'lucide-vue-next'
+import api from '@/lib/api'
 
 const filterStatus = ref('all')
+const searchQuery = ref('')
+const loading = ref(false)
+
 const letters = ref([
   { id: '1', requester: 'Ahmad Fauzi', nik: '3501234567890001', type: 'SKCK', date: '2026-07-11', status: 'pending' },
   { id: '2', requester: 'Siti Aminah', nik: '3501234567890002', type: 'DOMISILI', date: '2026-07-11', status: 'pending' },
@@ -12,6 +16,52 @@ const letters = ref([
 
 const statusColors: Record<string, string> = { pending: 'badge-warm', approved: 'badge-accent', rejected: 'badge-danger' }
 const statusLabels: Record<string, string> = { pending: 'Menunggu', approved: 'Disetujui', rejected: 'Ditolak' }
+
+async function fetchLetters() {
+  try {
+    loading.value = true
+    const response = await api.get('/letters', {
+      params: {
+        status: filterStatus.value === 'all' ? undefined : filterStatus.value,
+        search: searchQuery.value || undefined
+      }
+    })
+    if (response.data?.success && Array.isArray(response.data?.data)) {
+      letters.value = response.data.data.map((l: any) => ({
+        id: l.id,
+        requester: l.profile?.full_name || l.requester_id || 'Warga',
+        nik: l.profile?.nik || '-',
+        type: l.letter_type,
+        date: l.created_at,
+        status: l.status,
+      }))
+    }
+  } catch (err) {
+    console.warn('Gagal memuat daftar pengajuan surat dari server, menggunakan fallback data simulasi:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+async function updateStatus(id: string, status: 'approved' | 'rejected') {
+  try {
+    const response = await api.patch(`/letters/${id}/status`, { status })
+    if (response.data?.success) {
+      alert(`Status pengajuan surat berhasil diubah menjadi ${status === 'approved' ? 'Disetujui' : 'Ditolak'}.`)
+      fetchLetters()
+    }
+  } catch (err: any) {
+    alert(`Gagal mengubah status: ${err.message}`)
+  }
+}
+
+watch([filterStatus, searchQuery], () => {
+  fetchLetters()
+})
+
+onMounted(() => {
+  fetchLetters()
+})
 </script>
 
 <template>
@@ -24,7 +74,7 @@ const statusLabels: Record<string, string> = { pending: 'Menunggu', approved: 'D
     <div class="card flex flex-col sm:flex-row gap-4">
       <div class="relative flex-1 max-w-md">
         <Search :size="18" class="absolute left-3.5 top-1/2 -translate-y-1/2 text-surface-400" />
-        <input type="text" placeholder="Cari pemohon..." class="input pl-11" />
+        <input v-model="searchQuery" type="text" placeholder="Cari pemohon..." class="input pl-11" />
       </div>
       <div class="flex gap-2">
         <button v-for="s in ['all', 'pending', 'approved', 'rejected']" :key="s" @click="filterStatus = s"
@@ -59,8 +109,8 @@ const statusLabels: Record<string, string> = { pending: 'Menunggu', approved: 'D
               <td class="py-3 px-4">
                 <div class="flex items-center gap-1">
                   <button class="p-1.5 rounded-lg text-surface-400 hover:bg-surface-100 hover:text-surface-600" title="Lihat Detail"><Eye :size="16" /></button>
-                  <button v-if="letter.status === 'pending'" class="p-1.5 rounded-lg text-accent-500 hover:bg-accent-50" title="Setujui"><CheckCircle :size="16" /></button>
-                  <button v-if="letter.status === 'pending'" class="p-1.5 rounded-lg text-danger-500 hover:bg-red-50" title="Tolak"><XCircle :size="16" /></button>
+                  <button v-if="letter.status === 'pending'" @click="updateStatus(letter.id, 'approved')" class="p-1.5 rounded-lg text-accent-500 hover:bg-accent-50" title="Setujui"><CheckCircle :size="16" /></button>
+                  <button v-if="letter.status === 'pending'" @click="updateStatus(letter.id, 'rejected')" class="p-1.5 rounded-lg text-danger-500 hover:bg-red-50" title="Tolak"><XCircle :size="16" /></button>
                 </div>
               </td>
             </tr>

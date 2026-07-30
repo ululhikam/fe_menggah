@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { BarChart3, TrendingUp, Wallet, ArrowUpRight } from 'lucide-vue-next'
 import { formatCurrency } from '@/lib/utils'
+import api from '@/lib/api'
 
 const selectedYear = ref(2026)
 const years = [2024, 2025, 2026]
+const loading = ref(false)
 
 const budgetData = ref([
   { category: 'Pembangunan Infrastruktur', allocated: 1200000000, realized: 1050000000 },
@@ -16,7 +18,33 @@ const budgetData = ref([
 
 const totalAllocated = computed(() => budgetData.value.reduce((s, b) => s + b.allocated, 0))
 const totalRealized = computed(() => budgetData.value.reduce((s, b) => s + b.realized, 0))
-const realization = computed(() => Math.round((totalRealized.value / totalAllocated.value) * 100))
+const realization = computed(() => totalAllocated.value ? Math.round((totalRealized.value / totalAllocated.value) * 100) : 0)
+
+async function fetchBudget() {
+  try {
+    loading.value = true
+    const response = await api.get(`/public/budget/${selectedYear.value}`)
+    if (response.data?.success && Array.isArray(response.data?.data) && response.data.data.length > 0) {
+      budgetData.value = response.data.data.map((b: any) => ({
+        category: b.category,
+        allocated: b.allocated_amount,
+        realized: b.realized_amount
+      }))
+    }
+  } catch (err) {
+    console.warn('Gagal memuat transparansi dana dari server, menggunakan data simulasi:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+watch(selectedYear, () => {
+  fetchBudget()
+})
+
+onMounted(() => {
+  fetchBudget()
+})
 </script>
 
 <template>
