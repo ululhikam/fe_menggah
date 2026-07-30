@@ -43,9 +43,7 @@ function isActive(path: string) {
       
       <!-- Brand Logo -->
       <RouterLink to="/" class="flex items-center gap-3 shrink-0">
-        <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center shadow-sm">
-          <span class="text-white font-serif font-black text-base">S</span>
-        </div>
+        <img src="/logo.svg" alt="SIP Desa" class="w-8 h-8 object-contain" />
         <div class="hidden sm:block">
           <span class="font-sans font-black text-sm uppercase tracking-wider text-slate-900">
             SIP Desa

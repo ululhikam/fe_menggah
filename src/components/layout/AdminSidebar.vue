@@ -62,9 +62,7 @@ async function handleLogout() {
     <!-- Header -->
     <div class="p-5 flex items-center justify-between border-b border-surface-800">
       <RouterLink to="/admin" class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-lg gradient-primary flex items-center justify-center">
-          <span class="text-white font-bold text-sm">S</span>
-        </div>
+        <img src="/logo.svg" alt="SIP Desa" class="w-9 h-9 object-contain" />
         <div>
           <span class="font-bold text-white text-sm">SIP Desa</span>
           <span class="block text-xs text-surface-500">Admin Panel</span>
