@@ -109,16 +109,7 @@ const handleFormSubmit = () => {
   }, 1000)
 }
 
-const activeAnnouncements = ref([
-  {
-    id: 'mock-1',
-    title: 'Kerja Bakti Bersih Desa & Sosialisasi KKN Menggah 2026',
-    content: 'Dihimbau kepada seluruh warga Dusun Menggah untuk mengikuti kegiatan kerja bakti kebersihan lingkungan dusun bersama mahasiswa KKN pada hari Minggu, 2 Agustus 2026 pukul 07.00 WIB.',
-    start_date: '2026-07-30',
-    end_date: '2026-08-02',
-    priority: 'high'
-  }
-])
+const activeAnnouncements = ref<any[]>([])
 
 async function fetchAnnouncements() {
   try {

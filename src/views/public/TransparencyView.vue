@@ -8,13 +8,7 @@ const selectedYear = ref(2026)
 const years = [2024, 2025, 2026]
 const loading = ref(false)
 
-const budgetData = ref([
-  { category: 'Pembangunan Infrastruktur', allocated: 1200000000, realized: 1050000000 },
-  { category: 'Pemberdayaan Masyarakat', allocated: 450000000, realized: 420000000 },
-  { category: 'Pendidikan & Kesehatan', allocated: 380000000, realized: 350000000 },
-  { category: 'Pemerintahan Desa', allocated: 320000000, realized: 310000000 },
-  { category: 'Sosial & Budaya', allocated: 150000000, realized: 130000000 },
-])
+const budgetData = ref<any[]>([])
 
 const totalAllocated = computed(() => budgetData.value.reduce((s, b) => s + b.allocated, 0))
 const totalRealized = computed(() => budgetData.value.reduce((s, b) => s + b.realized, 0))

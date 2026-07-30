@@ -7,12 +7,7 @@ const filterStatus = ref('all')
 const searchQuery = ref('')
 const loading = ref(false)
 
-const letters = ref([
-  { id: '1', requester: 'Ahmad Fauzi', nik: '3501234567890001', type: 'SKCK', date: '2026-07-11', status: 'pending' },
-  { id: '2', requester: 'Siti Aminah', nik: '3501234567890002', type: 'DOMISILI', date: '2026-07-11', status: 'pending' },
-  { id: '3', requester: 'Budi Hartono', nik: '3501234567890003', type: 'SKTM', date: '2026-07-10', status: 'approved' },
-  { id: '4', requester: 'Dewi Sari', nik: '3501234567890004', type: 'UMUM', date: '2026-07-10', status: 'rejected' },
-])
+const letters = ref<any[]>([])
 
 const statusColors: Record<string, string> = { pending: 'badge-warm', approved: 'badge-accent', rejected: 'badge-danger' }
 const statusLabels: Record<string, string> = { pending: 'Menunggu', approved: 'Disetujui', rejected: 'Ditolak' }

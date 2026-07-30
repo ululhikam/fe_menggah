@@ -4,19 +4,13 @@ import { Users, FileText, Newspaper, TrendingUp, ArrowUpRight, ArrowDownRight } 
 import api from '@/lib/api'
 
 const stats = ref([
-  { label: 'Total Penduduk', value: '3.247', change: '+12', trend: 'up', icon: Users, color: 'primary' },
-  { label: 'Surat Pending', value: '23', change: '-5', trend: 'down', icon: FileText, color: 'warm' },
-  { label: 'Surat Selesai', value: '1.560', change: '+48', trend: 'up', icon: FileText, color: 'accent' },
-  { label: 'Artikel Berita', value: '89', change: '+3', trend: 'up', icon: Newspaper, color: 'primary' },
+  { label: 'Total Penduduk', value: '-', change: '0', trend: 'up', icon: Users, color: 'primary' },
+  { label: 'Surat Pending', value: '-', change: '0', trend: 'down', icon: FileText, color: 'warm' },
+  { label: 'Surat Selesai', value: '-', change: '0', trend: 'up', icon: FileText, color: 'accent' },
+  { label: 'Artikel Berita', value: '-', change: '0', trend: 'up', icon: Newspaper, color: 'primary' },
 ])
 
-const recentLetters = ref([
-  { id: '1', requester: 'Ahmad Fauzi', type: 'SKCK', date: '2026-07-11', status: 'pending' },
-  { id: '2', requester: 'Siti Aminah', type: 'DOMISILI', date: '2026-07-11', status: 'pending' },
-  { id: '3', requester: 'Budi Hartono', type: 'SKTM', date: '2026-07-10', status: 'approved' },
-  { id: '4', requester: 'Dewi Sari', type: 'UMUM', date: '2026-07-10', status: 'rejected' },
-  { id: '5', requester: 'Eko Prasetyo', type: 'DOMISILI', date: '2026-07-09', status: 'approved' },
-])
+const recentLetters = ref<any[]>([])
 
 const statusColors: Record<string, string> = {
   pending: 'badge-warm',

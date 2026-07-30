@@ -6,11 +6,7 @@ import api from '@/lib/api'
 const activeTab = ref('berita')
 const loading = ref(false)
 
-const articles = ref([
-  { id: '1', title: 'Pembangunan Jalan Desa Tahap III', category: 'Pembangunan', published: true, date: '2026-07-10', content: 'Konten pembangunan jalan...' },
-  { id: '2', title: 'Pendaftaran BLT Juli 2026', category: 'Sosial', published: true, date: '2026-07-08', content: 'Konten pendaftaran BLT...' },
-  { id: '3', title: 'Festival Budaya Desa 2026', category: 'Budaya', published: false, date: '2026-07-05', content: 'Konten festival budaya...' },
-])
+const articles = ref<any[]>([])
 
 // Modal Form State
 const showModal = ref(false)
