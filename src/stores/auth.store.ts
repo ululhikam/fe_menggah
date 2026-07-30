@@ -5,6 +5,75 @@ import type { Profile } from '@/types/models.types'
 import { UserRole } from '@/types/enums'
 import type { User } from '@supabase/supabase-js'
 
+const mockUsers: Record<string, { user: any, profile: Profile }> = {
+  'superadmin@katekan.desa.id': {
+    user: { id: 'mock-super-admin-id', email: 'superadmin@katekan.desa.id' },
+    profile: {
+      id: 'mock-super-admin-id',
+      nik: '3310000000000001',
+      full_name: 'Supardi (Super Admin KKN)',
+      birth_place: 'Klaten',
+      birth_date: '1990-01-01',
+      gender: 'laki-laki' as any,
+      religion: 'islam' as any,
+      marital_status: 'kawin' as any,
+      education: 'S1',
+      occupation: 'PNS',
+      address: 'Dusun Menggah RT 01 / RW 01, Katekan, Gantiwarno',
+      family_card_id: 'mock-kk-1',
+      role: UserRole.SUPER_ADMIN,
+      phone: '081234567890',
+      photo_url: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+  },
+  'admin@katekan.desa.id': {
+    user: { id: 'mock-admin-id', email: 'admin@katekan.desa.id' },
+    profile: {
+      id: 'mock-admin-id',
+      nik: '3310000000000002',
+      full_name: 'Sarwono, S.Sos (Kepala Desa)',
+      birth_place: 'Klaten',
+      birth_date: '1985-05-12',
+      gender: 'laki-laki' as any,
+      religion: 'islam' as any,
+      marital_status: 'kawin' as any,
+      education: 'S1',
+      occupation: 'Kepala Desa',
+      address: 'Dusun Menggah RT 02 / RW 01, Katekan, Gantiwarno',
+      family_card_id: 'mock-kk-1',
+      role: UserRole.ADMIN,
+      phone: '081234567891',
+      photo_url: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+  },
+  'warga@katekan.desa.id': {
+    user: { id: 'mock-warga-id', email: 'warga@katekan.desa.id' },
+    profile: {
+      id: 'mock-warga-id',
+      nik: '3310000000000003',
+      full_name: 'Budi Santoso',
+      birth_place: 'Klaten',
+      birth_date: '1995-08-21',
+      gender: 'laki-laki' as any,
+      religion: 'islam' as any,
+      marital_status: 'belum_kawin' as any,
+      education: 'SMA',
+      occupation: 'Buruh',
+      address: 'Dusun Menggah RT 03 / RW 01, Katekan, Gantiwarno',
+      family_card_id: 'mock-kk-2',
+      role: UserRole.WARGA,
+      phone: '081234567892',
+      photo_url: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+  }
+}
+
 export const useAuthStore = defineStore('auth', () => {
   // State
   const user = ref<User | null>(null)
@@ -27,6 +96,15 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       loading.value = true
 
+      // Check for mock session first
+      const savedMockSession = localStorage.getItem('sip_desa_mock_session')
+      if (savedMockSession) {
+        const mockSession = JSON.parse(savedMockSession)
+        user.value = mockSession.user
+        profile.value = mockSession.profile
+        return
+      }
+
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) {
         user.value = session.user
@@ -35,6 +113,9 @@ export const useAuthStore = defineStore('auth', () => {
 
       // Listen for auth state changes
       supabase.auth.onAuthStateChange(async (_event, session) => {
+        // Skip trigger if we have a simulated mock session active
+        if (localStorage.getItem('sip_desa_mock_session')) return
+
         user.value = session?.user || null
         if (session?.user) {
           await fetchProfile()
@@ -71,6 +152,21 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       loading.value = true
       error.value = null
+
+      // Check for mock credentials first
+      const lowercaseEmail = email.toLowerCase().trim()
+      if (mockUsers[lowercaseEmail]) {
+        if (password === 'password123') {
+          const mockSession = mockUsers[lowercaseEmail]
+          user.value = mockSession.user
+          profile.value = mockSession.profile
+          localStorage.setItem('sip_desa_mock_session', JSON.stringify(mockSession))
+          return
+        } else {
+          error.value = 'Kata sandi simulasi salah'
+          throw new Error('Kata sandi simulasi salah')
+        }
+      }
 
       const { error: loginError } = await supabase.auth.signInWithPassword({
         email,
@@ -109,6 +205,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function logout() {
+    localStorage.removeItem('sip_desa_mock_session')
     await supabase.auth.signOut()
     user.value = null
     profile.value = null

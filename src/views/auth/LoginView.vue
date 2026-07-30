@@ -105,6 +105,26 @@ async function handleLogin() {
           <RouterLink to="/register" class="text-warm-300 hover:text-warm-400 font-bold ml-1">Daftar Baru</RouterLink>
         </p>
       </form>
+
+      <!-- Mock Accounts Hint -->
+      <div class="mt-6 bg-white/5 border border-white/10 rounded-[1.5rem] p-5 text-left text-[11px] text-primary-200 opacity-90 backdrop-blur-md">
+        <h4 class="font-extrabold uppercase tracking-wider text-warm-300 mb-2">Simulasi Akun (Bypass Supabase)</h4>
+        <p class="mb-3 leading-relaxed">Gunakan akun berikut dengan kata sandi <code class="bg-white/10 px-1.5 py-0.5 rounded text-white font-mono">password123</code> untuk menguji panel secara instan:</p>
+        <ul class="space-y-2">
+          <li class="flex justify-between items-center border-b border-white/5 pb-1.5">
+            <span><strong>Super Admin Panel:</strong></span>
+            <code class="bg-white/5 px-2 py-0.5 rounded text-white font-mono select-all cursor-pointer">superadmin@katekan.desa.id</code>
+          </li>
+          <li class="flex justify-between items-center border-b border-white/5 pb-1.5">
+            <span><strong>Admin Desa (Kades):</strong></span>
+            <code class="bg-white/5 px-2 py-0.5 rounded text-white font-mono select-all cursor-pointer">admin@katekan.desa.id</code>
+          </li>
+          <li class="flex justify-between items-center">
+            <span><strong>Warga (Dashboard):</strong></span>
+            <code class="bg-white/5 px-2 py-0.5 rounded text-white font-mono select-all cursor-pointer">warga@katekan.desa.id</code>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
