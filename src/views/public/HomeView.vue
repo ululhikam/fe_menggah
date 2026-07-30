@@ -5,13 +5,13 @@ import {
   MapPin,
   ChevronLeft,
   ChevronRight,
-  Compass,
   FileText,
   Map,
   MessageSquare,
   Instagram,
   Twitter,
-  Facebook
+  Facebook,
+  Users
 } from 'lucide-vue-next'
 
 // Statistics bar under Hero
@@ -75,16 +75,16 @@ const benefits = ref([
 // Packages Section (Section 4)
 const packages = ref([
   {
-    title: 'Sektor Agraris Menggah',
-    desc: 'Bentang lahan pertanian subur yang didominasi tanaman pangan sebagai pilar ekonomi keluarga.',
+    title: 'Geografis & Lingkungan',
+    desc: 'Dusun Menggah berada di dataran rendah subur Kecamatan Gantiwarno, Klaten, berbatasan langsung dengan Sleman & Gunungkidul DIY.',
     image: '/images/nature_spot_ricefields.png',
-    icon: Compass
+    icon: MapPin
   },
   {
-    title: 'Budaya Guyub Rukun',
-    desc: 'Eratnya tradisi gotong royong dan kebersamaan komunitas masyarakat Jawa pedesaan.',
+    title: 'Sosial & Ekonomi',
+    desc: 'Mata pencaharian utama pertanian (padi & palawija), peternakan, serta industri kreatif konveksi terpadu dengan kebersamaan gotong royong.',
     image: '/images/nature_spot_camp.png',
-    icon: Compass
+    icon: Users
   }
 ])
 

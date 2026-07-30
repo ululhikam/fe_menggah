@@ -54,12 +54,12 @@ const orgStructure = [
       <div class="container-main">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <!-- Visi Card -->
-          <div class="bg-white border border-surface-200/50 rounded-[1.8rem] p-8 shadow-sm flex flex-col justify-between hover:shadow-card transition-all duration-300">
+          <div class="bg-white border border-surface-200/50 rounded-[1.8rem] p-8 shadow-sm flex flex-col justify-between hover:shadow-card hover:scale-[1.01] transition-all duration-300">
             <div>
               <div class="w-12 h-12 rounded-[1rem] bg-primary-50 text-primary-600 flex items-center justify-center mb-6">
                 <Eye :size="22" />
               </div>
-              <h2 class="text-lg font-extrabold uppercase tracking-wider text-surface-800 mb-4">Visi Utama</h2>
+              <h2 class="text-xl font-bold font-serif text-surface-800 mb-4">Visi Utama</h2>
               <p class="text-sm text-surface-600 leading-relaxed font-light italic">
                 "Mewujudkan Dusun Menggah, Desa Katekan yang mandiri secara ekonomi, sejahtera, berbudaya, serta tangguh bencana."
               </p>
@@ -70,11 +70,11 @@ const orgStructure = [
           </div>
 
           <!-- Misi Card -->
-          <div class="bg-white border border-surface-200/50 rounded-[1.8rem] p-8 shadow-sm hover:shadow-card transition-all duration-300">
+          <div class="bg-white border border-surface-200/50 rounded-[1.8rem] p-8 shadow-sm hover:shadow-card hover:scale-[1.01] transition-all duration-300">
             <div class="w-12 h-12 rounded-[1rem] bg-accent-50 text-accent-600 flex items-center justify-center mb-6">
               <Target :size="22" />
             </div>
-            <h2 class="text-lg font-extrabold uppercase tracking-wider text-surface-800 mb-5">Misi Pembangunan</h2>
+            <h2 class="text-xl font-bold font-serif text-surface-800 mb-5">Misi Pembangunan</h2>
             <ol class="space-y-4">
               <li v-for="(m, i) in missions" :key="i" class="flex gap-4 text-xs sm:text-sm text-surface-600">
                 <span class="w-6 h-6 rounded-full bg-accent-50 text-accent-700 text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5 border border-accent-100">
@@ -89,7 +89,7 @@ const orgStructure = [
     </section>
 
     <!-- ===== DETAIL PROFIL DUSUN ===== -->
-    <section class="section bg-white border-b border-surface-200">
+    <section class="section bg-surface-50 border-b border-surface-200">
       <div class="container-main">
         <div class="text-center max-w-2xl mx-auto mb-16">
           <span class="section-subtitle text-primary-600">Kondisi Wilayah &amp; Masyarakat</span>
@@ -101,13 +101,13 @@ const orgStructure = [
           <!-- Left Column: Administratif & Geografis -->
           <div class="space-y-6">
             <!-- Profil Administratif -->
-            <div class="bg-surface-50 border border-surface-200/50 rounded-[1.8rem] p-6 hover:shadow-card transition-all duration-300">
+            <div class="bg-white border border-surface-200/50 rounded-[1.8rem] p-6 hover:shadow-card hover:scale-[1.01] transition-all duration-300">
               <div class="flex items-start gap-4">
                 <div class="w-10 h-10 rounded-[0.8rem] bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
                   <MapPin :size="20" />
                 </div>
                 <div class="w-full">
-                  <h3 class="text-sm font-extrabold uppercase tracking-wider text-surface-800 mb-3">Profil Administratif</h3>
+                  <h3 class="text-base font-bold font-serif text-surface-800 mb-3">Profil Administratif</h3>
                   <table class="w-full text-xs text-surface-600">
                     <tbody>
                       <tr class="border-b border-surface-200/50">
@@ -137,13 +137,13 @@ const orgStructure = [
             </div>
 
             <!-- Kondisi Geografis dan Lingkungan -->
-            <div class="bg-surface-50 border border-surface-200/50 rounded-[1.8rem] p-6 hover:shadow-card transition-all duration-300">
+            <div class="bg-white border border-surface-200/50 rounded-[1.8rem] p-6 hover:shadow-card hover:scale-[1.01] transition-all duration-300">
               <div class="flex items-start gap-4">
                 <div class="w-10 h-10 rounded-[0.8rem] bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
                   <Compass :size="20" />
                 </div>
                 <div class="text-xs sm:text-sm">
-                  <h3 class="text-sm font-extrabold uppercase tracking-wider text-surface-800 mb-3">Kondisi Geografis &amp; Lingkungan</h3>
+                  <h3 class="text-base font-bold font-serif text-surface-800 mb-3">Kondisi Geografis &amp; Lingkungan</h3>
                   <p class="text-surface-650 leading-relaxed font-light mb-3">
                     <strong class="text-surface-800 font-bold">Lokasi Wilayah:</strong> Kecamatan Gantiwarno berlokasi di bagian selatan Kabupaten Klaten dan berbatasan langsung dengan Provinsi Daerah Istimewa Yogyakarta (Sleman dan Gunungkidul). Desa Katekan sendiri berada di kawasan dengan topografi dataran rendah yang subur.
                   </p>
@@ -158,13 +158,13 @@ const orgStructure = [
           <!-- Right Column: Sosial Ekonomi & Infrastruktur -->
           <div class="space-y-6">
             <!-- Sosial dan Ekonomi -->
-            <div class="bg-surface-50 border border-surface-200/50 rounded-[1.8rem] p-6 hover:shadow-card transition-all duration-300">
+            <div class="bg-white border border-surface-200/50 rounded-[1.8rem] p-6 hover:shadow-card hover:scale-[1.01] transition-all duration-300">
               <div class="flex items-start gap-4">
                 <div class="w-10 h-10 rounded-[0.8rem] bg-accent-50 text-accent-600 flex items-center justify-center shrink-0">
                   <Users :size="20" />
                 </div>
                 <div class="text-xs sm:text-sm">
-                  <h3 class="text-sm font-extrabold uppercase tracking-wider text-surface-800 mb-3">Sosial &amp; Ekonomi</h3>
+                  <h3 class="text-base font-bold font-serif text-surface-800 mb-3">Sosial &amp; Ekonomi</h3>
                   <p class="text-surface-650 leading-relaxed font-light mb-3">
                     <strong class="text-surface-800 font-bold">Mata Pencaharian Utama:</strong> Mayoritas penduduk di wilayah Desa Katekan, termasuk Dusun Menggah, umumnya mengandalkan sektor pertanian (padi dan palawija) serta peternakan sebagai sumber mata pencaharian utama. Terdapat juga warga yang berprofesi sebagai pedagang, pekerja swasta, dan buruh harian.
                   </p>
@@ -176,13 +176,13 @@ const orgStructure = [
             </div>
 
             <!-- Infrastruktur dan Akses -->
-            <div class="bg-surface-50 border border-surface-200/50 rounded-[1.8rem] p-6 hover:shadow-card transition-all duration-300">
+            <div class="bg-white border border-surface-200/50 rounded-[1.8rem] p-6 hover:shadow-card hover:scale-[1.01] transition-all duration-300">
               <div class="flex items-start gap-4">
                 <div class="w-10 h-10 rounded-[0.8rem] bg-accent-50 text-accent-600 flex items-center justify-center shrink-0">
                   <Wrench :size="20" />
                 </div>
                 <div class="text-xs sm:text-sm">
-                  <h3 class="text-sm font-extrabold uppercase tracking-wider text-surface-800 mb-3">Infrastruktur &amp; Akses</h3>
+                  <h3 class="text-base font-bold font-serif text-surface-800 mb-3">Infrastruktur &amp; Akses</h3>
                   <p class="text-surface-650 leading-relaxed font-light mb-4">
                     Sebagai bagian dari Desa Katekan, warga Dusun Menggah terintegrasi dengan akses fasilitas umum tingkat desa dan kecamatan, seperti:
                   </p>
@@ -209,7 +209,7 @@ const orgStructure = [
     </section>
 
     <!-- Struktur Organisasi -->
-    <section class="section bg-surface-100">
+    <section class="section bg-surface-50">
       <div class="container-main">
         <div class="text-center max-w-2xl mx-auto mb-16">
           <span class="section-subtitle text-primary-600">Pemerintahan Desa &amp; Dusun</span>
