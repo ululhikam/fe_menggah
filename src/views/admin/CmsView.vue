@@ -1,13 +1,68 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Newspaper, Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-vue-next'
+import api from '@/lib/api'
 
 const activeTab = ref('berita')
+const loading = ref(false)
+
 const articles = ref([
   { id: '1', title: 'Pembangunan Jalan Desa Tahap III', category: 'Pembangunan', published: true, date: '2026-07-10' },
   { id: '2', title: 'Pendaftaran BLT Juli 2026', category: 'Sosial', published: true, date: '2026-07-08' },
   { id: '3', title: 'Festival Budaya Desa 2026', category: 'Budaya', published: false, date: '2026-07-05' },
 ])
+
+async function fetchArticles() {
+  try {
+    loading.value = true
+    const response = await api.get('/cms/news')
+    if (response.data?.success && response.data?.data?.items) {
+      const items = response.data.data.items
+      articles.value = items.map((a: any) => ({
+        id: a.id,
+        title: a.title,
+        category: a.category,
+        published: a.is_published,
+        date: a.published_at || a.created_at
+      }))
+    }
+  } catch (err) {
+    console.warn('Gagal memuat berita dari server, menggunakan data simulasi:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+async function deleteArticle(id: string) {
+  if (!confirm('Apakah Anda yakin ingin menghapus berita ini?')) return
+  try {
+    const response = await api.delete(`/cms/news/${id}`)
+    if (response.data?.success) {
+      alert('Berita berhasil dihapus.')
+      fetchArticles()
+    }
+  } catch (err: any) {
+    alert(`Gagal menghapus berita: ${err.message}`)
+  }
+}
+
+async function togglePublish(article: any) {
+  try {
+    const response = await api.patch(`/cms/news/${article.id}`, {
+      is_published: !article.published
+    })
+    if (response.data?.success) {
+      alert(`Berita berhasil diubah statusnya menjadi ${!article.published ? 'Terbit' : 'Draft'}.`)
+      fetchArticles()
+    }
+  } catch (err: any) {
+    alert(`Gagal memperbarui status: ${err.message}`)
+  }
+}
+
+onMounted(() => {
+  fetchArticles()
+})
 </script>
 
 <template>
@@ -55,10 +110,10 @@ const articles = ref([
               <td class="py-3 px-4">
                 <div class="flex items-center gap-1">
                   <button class="p-1.5 rounded-lg text-surface-400 hover:bg-primary-50 hover:text-primary-600"><Edit :size="16" /></button>
-                  <button class="p-1.5 rounded-lg text-surface-400 hover:bg-surface-100">
+                  <button @click="togglePublish(article)" class="p-1.5 rounded-lg text-surface-400 hover:bg-surface-100 hover:text-surface-700">
                     <component :is="article.published ? EyeOff : Eye" :size="16" />
                   </button>
-                  <button class="p-1.5 rounded-lg text-surface-400 hover:bg-red-50 hover:text-danger-500"><Trash2 :size="16" /></button>
+                  <button @click="deleteArticle(article.id)" class="p-1.5 rounded-lg text-surface-400 hover:bg-red-50 hover:text-danger-500"><Trash2 :size="16" /></button>
                 </div>
               </td>
             </tr>
