@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Building2, Target, Eye, Award, Sparkles } from 'lucide-vue-next'
+import { Building2, Target, Eye, Award, Sparkles, MapPin, Compass, Users, Wrench } from 'lucide-vue-next'
 
 const missions = [
   'Meningkatkan kualitas pelayanan administrasi kependudukan yang prima dan terintegrasi digital.',
@@ -83,6 +83,126 @@ const orgStructure = [
                 <span class="font-light leading-relaxed">{{ m }}</span>
               </li>
             </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DETAIL PROFIL DUSUN ===== -->
+    <section class="section bg-white border-b border-surface-200">
+      <div class="container-main">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <span class="section-subtitle text-primary-600">Kondisi Wilayah &amp; Masyarakat</span>
+          <h2 class="section-title mt-2">Profil &amp; Karakteristik Dusun Menggah</h2>
+          <div class="w-12 h-[1px] bg-primary-500 mx-auto mt-4"></div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Left Column: Administratif & Geografis -->
+          <div class="space-y-6">
+            <!-- Profil Administratif -->
+            <div class="bg-surface-50 border border-surface-200/50 rounded-[1.8rem] p-6 hover:shadow-card transition-all duration-300">
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-[0.8rem] bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
+                  <MapPin :size="20" />
+                </div>
+                <div class="w-full">
+                  <h3 class="text-sm font-extrabold uppercase tracking-wider text-surface-800 mb-3">Profil Administratif</h3>
+                  <table class="w-full text-xs text-surface-600">
+                    <tbody>
+                      <tr class="border-b border-surface-200/50">
+                        <td class="py-2.5 font-medium w-1/3 text-surface-500">Dusun / Dukuh</td>
+                        <td class="py-2.5 text-surface-800 font-semibold">Menggah</td>
+                      </tr>
+                      <tr class="border-b border-surface-200/50">
+                        <td class="py-2.5 font-medium text-surface-500">Desa / Kelurahan</td>
+                        <td class="py-2.5 text-surface-800 font-semibold">Katekan</td>
+                      </tr>
+                      <tr class="border-b border-surface-200/50">
+                        <td class="py-2.5 font-medium text-surface-500">Kecamatan</td>
+                        <td class="py-2.5 text-surface-800 font-semibold">Gantiwarno</td>
+                      </tr>
+                      <tr class="border-b border-surface-200/50">
+                        <td class="py-2.5 font-medium text-surface-500">Kabupaten</td>
+                        <td class="py-2.5 text-surface-800 font-semibold">Klaten</td>
+                      </tr>
+                      <tr>
+                        <td class="py-2.5 font-medium text-surface-500">Provinsi</td>
+                        <td class="py-2.5 text-surface-800 font-semibold">Jawa Tengah</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Kondisi Geografis dan Lingkungan -->
+            <div class="bg-surface-50 border border-surface-200/50 rounded-[1.8rem] p-6 hover:shadow-card transition-all duration-300">
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-[0.8rem] bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
+                  <Compass :size="20" />
+                </div>
+                <div class="text-xs sm:text-sm">
+                  <h3 class="text-sm font-extrabold uppercase tracking-wider text-surface-800 mb-3">Kondisi Geografis &amp; Lingkungan</h3>
+                  <p class="text-surface-650 leading-relaxed font-light mb-3">
+                    <strong class="text-surface-800 font-bold">Lokasi Wilayah:</strong> Kecamatan Gantiwarno berlokasi di bagian selatan Kabupaten Klaten dan berbatasan langsung dengan Provinsi Daerah Istimewa Yogyakarta (Sleman dan Gunungkidul). Desa Katekan sendiri berada di kawasan dengan topografi dataran rendah yang subur.
+                  </p>
+                  <p class="text-surface-650 leading-relaxed font-light">
+                    <strong class="text-surface-800 font-bold">Karakteristik Lingkungan:</strong> Dusun Menggah mewarisi karakteristik umum Desa Katekan yang bercorak agraris. Lingkungan pedesaannya masih didominasi oleh lahan pertanian dan pemukiman warga yang menyatu dengan alam.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Sosial Ekonomi & Infrastruktur -->
+          <div class="space-y-6">
+            <!-- Sosial dan Ekonomi -->
+            <div class="bg-surface-50 border border-surface-200/50 rounded-[1.8rem] p-6 hover:shadow-card transition-all duration-300">
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-[0.8rem] bg-accent-50 text-accent-600 flex items-center justify-center shrink-0">
+                  <Users :size="20" />
+                </div>
+                <div class="text-xs sm:text-sm">
+                  <h3 class="text-sm font-extrabold uppercase tracking-wider text-surface-800 mb-3">Sosial &amp; Ekonomi</h3>
+                  <p class="text-surface-650 leading-relaxed font-light mb-3">
+                    <strong class="text-surface-800 font-bold">Mata Pencaharian Utama:</strong> Mayoritas penduduk di wilayah Desa Katekan, termasuk Dusun Menggah, umumnya mengandalkan sektor pertanian (padi dan palawija) serta peternakan sebagai sumber mata pencaharian utama. Terdapat juga warga yang berprofesi sebagai pedagang, pekerja swasta, dan buruh harian.
+                  </p>
+                  <p class="text-surface-650 leading-relaxed font-light">
+                    <strong class="text-surface-800 font-bold">Keseharian Warga:</strong> Kehidupan sosial kemasyarakatan di tingkat dusun biasanya masih sangat kental dengan tradisi gotong royong, kegiatan keagamaan, dan pertemuan rukun tetangga (RT/RW) yang rutin.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Infrastruktur dan Akses -->
+            <div class="bg-surface-50 border border-surface-200/50 rounded-[1.8rem] p-6 hover:shadow-card transition-all duration-300">
+              <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-[0.8rem] bg-accent-50 text-accent-600 flex items-center justify-center shrink-0">
+                  <Wrench :size="20" />
+                </div>
+                <div class="text-xs sm:text-sm">
+                  <h3 class="text-sm font-extrabold uppercase tracking-wider text-surface-800 mb-3">Infrastruktur &amp; Akses</h3>
+                  <p class="text-surface-650 leading-relaxed font-light mb-4">
+                    Sebagai bagian dari Desa Katekan, warga Dusun Menggah terintegrasi dengan akses fasilitas umum tingkat desa dan kecamatan, seperti:
+                  </p>
+                  <ul class="space-y-2.5">
+                    <li class="flex items-start gap-2.5 text-surface-650 font-light text-xs sm:text-sm">
+                      <span class="w-1.5 h-1.5 rounded-full bg-accent-500 shrink-0 mt-2"></span>
+                      <span>Layanan administrasi di Balai Desa Katekan.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5 text-surface-650 font-light text-xs sm:text-sm">
+                      <span class="w-1.5 h-1.5 rounded-full bg-accent-500 shrink-0 mt-2"></span>
+                      <span>Fasilitas pendidikan dasar (SD) yang berada di sekitar kawasan desa.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5 text-surface-650 font-light text-xs sm:text-sm">
+                      <span class="w-1.5 h-1.5 rounded-full bg-accent-500 shrink-0 mt-2"></span>
+                      <span>Akses kesehatan primer melalui Puskesmas Pembantu atau Puskesmas Gantiwarno.</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
