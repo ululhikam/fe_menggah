@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import {
   MapPin,
@@ -11,8 +11,10 @@ import {
   Instagram,
   Twitter,
   Facebook,
-  Users
+  Users,
+  Megaphone
 } from 'lucide-vue-next'
+import api from '@/lib/api'
 
 // Statistics bar under Hero
 const heroStats = ref([
@@ -106,6 +108,32 @@ const handleFormSubmit = () => {
     alert('Permohonan layanan/pengaduan Anda telah dikirim ke perangkat desa. Kami akan menghubungi Anda segera melalui WhatsApp.')
   }, 1000)
 }
+
+const activeAnnouncements = ref([
+  {
+    id: 'mock-1',
+    title: 'Kerja Bakti Bersih Desa & Sosialisasi KKN Menggah 2026',
+    content: 'Dihimbau kepada seluruh warga Dusun Menggah untuk mengikuti kegiatan kerja bakti kebersihan lingkungan dusun bersama mahasiswa KKN pada hari Minggu, 2 Agustus 2026 pukul 07.00 WIB.',
+    start_date: '2026-07-30',
+    end_date: '2026-08-02',
+    priority: 'high'
+  }
+])
+
+async function fetchAnnouncements() {
+  try {
+    const response = await api.get('/public/announcements')
+    if (response.data?.success && Array.isArray(response.data?.data) && response.data.data.length > 0) {
+      activeAnnouncements.value = response.data.data
+    }
+  } catch (err) {
+    console.warn('Gagal memuat pengumuman dari server, menggunakan data simulasi:', err)
+  }
+}
+
+onMounted(() => {
+  fetchAnnouncements()
+})
 </script>
 
 <template>
@@ -163,6 +191,32 @@ const handleFormSubmit = () => {
 
         <!-- bottom spacer -->
         <div class="h-10"></div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION: PENGUMUMAN PENTING ===== -->
+    <section v-if="activeAnnouncements.length > 0" class="px-4 sm:px-6 lg:px-8 -mt-6 mb-8 relative z-20 max-w-7xl mx-auto">
+      <div class="bg-amber-500/10 border border-amber-500/20 backdrop-blur-md rounded-[1.8rem] p-6 shadow-sm">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 flex items-center justify-center shrink-0">
+            <Megaphone :size="20" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-amber-500 text-white mb-2">
+              Pengumuman Penting
+            </span>
+            <div class="space-y-3">
+              <div v-for="ann in activeAnnouncements" :key="ann.id" class="border-b border-amber-500/10 pb-3 last:border-b-0 last:pb-0">
+                <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">{{ ann.title }}</h4>
+                <p class="text-[11px] sm:text-xs text-slate-650 leading-relaxed font-light mt-1">{{ ann.content }}</p>
+                <div class="flex items-center gap-2 mt-2 text-[9px] text-slate-400 font-bold">
+                  <span>Mulai: {{ new Date(ann.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}</span>
+                  <span v-if="ann.end_date">&bull; Selesai: {{ new Date(ann.end_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
