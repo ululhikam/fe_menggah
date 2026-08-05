@@ -1,117 +1,142 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { MapPin, Phone, Mail, Globe, Sparkles } from 'lucide-vue-next'
+import { MapPin, Phone, Mail, Instagram, Youtube, Facebook, Sparkles } from 'lucide-vue-next'
+import { useAuthStore } from '@/stores/auth.store'
 
+const authStore = useAuthStore()
 const currentYear = new Date().getFullYear()
 
-const quickLinks = [
+const navLinks = [
   { to: '/', label: 'Beranda' },
-  { to: '/profil', label: 'Profil Desa' },
+  { to: '/profil', label: 'Profil Dusun' },
+  { to: '/kepengurusan', label: 'Kepengurusan' },
   { to: '/berita', label: 'Berita' },
-  { to: '/galeri', label: 'Galeri' },
+  { to: '/agenda', label: 'Agenda' },
 ]
 
-const serviceLinks = [
-  { to: '/layanan', label: 'Layanan Mandiri' },
-  { to: '/transparansi', label: 'Transparansi Dana' },
-  { to: '/login', label: 'Login Warga' },
+const moreLinks = [
+  { to: '/galeri', label: 'Galeri' },
+  { to: '/organisasi', label: 'Organisasi' },
+  { to: '/pengumuman', label: 'Pengumuman' },
+  { to: '/arsip', label: 'Arsip' },
+  { to: '/kontak', label: 'Kontak' },
+]
+
+const socialLinks = [
+  { icon: Instagram, href: 'https://instagram.com/dusunmenggah', label: 'Instagram' },
+  { icon: Facebook, href: 'https://facebook.com/dusunmenggah', label: 'Facebook' },
+  { icon: Youtube, href: 'https://youtube.com/@dusunmenggah', label: 'YouTube' },
 ]
 </script>
 
 <template>
-  <footer class="bg-primary-950 text-primary-200 relative overflow-hidden font-sans border-t border-slate-900">
-    <!-- Decorative background gradient -->
-    <div class="absolute inset-0 z-0">
+  <footer class="bg-slate-950 border-t border-slate-900 text-slate-100 relative overflow-hidden">
+    
+    <!-- Fine-grain background texture backdrop image overlay -->
+    <div class="absolute inset-0 z-0 pointer-events-none opacity-[0.06]">
       <img 
         src="/images/misty_mountain_hero.png" 
-        alt="Footer Background" 
-        class="w-full h-full object-cover opacity-10 object-center"
+        alt="Misty Mountain" 
+        class="w-full h-full object-cover scale-105"
       />
-      <div class="absolute inset-0 bg-gradient-to-t from-primary-950 via-primary-950/90 to-transparent"></div>
     </div>
 
-    <div class="container-main relative z-10 py-16 px-6 md:px-12">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-        <!-- Brand -->
+    <!-- Top section -->
+    <div class="max-w-6xl mx-auto px-6 py-16 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        
+        <!-- Brand / Logo -->
         <div class="lg:col-span-1">
           <div class="flex items-center gap-3 mb-5">
-            <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center shadow-sm">
-              <span class="text-white font-black text-base">S</span>
-            </div>
+            <img 
+              src="/logodesa.jpeg" 
+              alt="Logo Desa Katekan" 
+              class="w-10 h-10 rounded-xl object-cover border border-slate-700/60 shadow-sm"
+            />
             <div>
-              <span class="font-sans font-black text-sm uppercase tracking-wider text-white">SIP Desa</span>
-              <p class="text-[9px] uppercase tracking-widest font-extrabold text-primary-400">Desa Katekan (Menggah)</p>
+              <span class="block font-black text-base text-white leading-tight">Dusun Menggah</span>
+              <span class="block text-[10px] text-emerald-400 font-extrabold uppercase tracking-wider">Desa Katekan, Ngawi</span>
             </div>
           </div>
-          <p class="text-xs text-primary-200/75 leading-relaxed font-light mb-6">
-            Mendigitalisasi administrasi kependudukan dan meningkatkan transparansi tata kelola desa demi pelayanan publik yang lebih prima.
+          <p class="text-xs text-slate-400 leading-relaxed font-semibold mb-6">
+            Portal informasi resmi Dusun Menggah. Pusat informasi, dokumentasi kegiatan, dan publikasi potensi dusun untuk seluruh warga.
           </p>
-          <span class="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-widest font-extrabold text-warm-300 bg-white/5 border border-white/10 px-3 py-1 rounded-full">
-            <Sparkles :size="10" /> Gotong Royong Digital
+          <span class="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-extrabold text-emerald-300/90 bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-full">
+            <Sparkles :size="10" class="text-emerald-400" /> Gotong Royong Digital
           </span>
         </div>
 
-        <!-- Quick Links -->
+        <!-- Nav Links -->
         <div>
-          <h4 class="text-xs uppercase tracking-widest font-extrabold text-white mb-5">Navigasi Portal</h4>
-          <ul class="space-y-3">
-            <li v-for="link in quickLinks" :key="link.to">
-              <RouterLink
-                :to="link.to"
-                class="text-xs text-primary-200/70 hover:text-warm-300 transition-colors duration-300 font-light"
-              >
+          <h4 class="text-[9px] uppercase tracking-widest font-extrabold text-slate-450 mb-5">Navigasi</h4>
+          <ul class="space-y-3 font-semibold text-xs text-slate-350">
+            <li v-for="link in navLinks" :key="link.to">
+              <RouterLink :to="link.to" class="hover:text-emerald-350 transition-colors">
                 {{ link.label }}
               </RouterLink>
             </li>
           </ul>
         </div>
 
-        <!-- Services -->
+        <!-- More Links -->
         <div>
-          <h4 class="text-xs uppercase tracking-widest font-extrabold text-white mb-5">Layanan Mandiri</h4>
-          <ul class="space-y-3">
-            <li v-for="link in serviceLinks" :key="link.to">
-              <RouterLink
-                :to="link.to"
-                class="text-xs text-primary-200/70 hover:text-warm-300 transition-colors duration-300 font-light"
-              >
+          <h4 class="text-[9px] uppercase tracking-widest font-extrabold text-slate-450 mb-5">Lainnya</h4>
+          <ul class="space-y-3 font-semibold text-xs text-slate-350">
+            <li v-for="link in moreLinks" :key="link.to">
+              <RouterLink :to="link.to" class="hover:text-emerald-350 transition-colors">
                 {{ link.label }}
               </RouterLink>
             </li>
           </ul>
         </div>
 
-        <!-- Contact Info -->
+        <!-- Contact & Social -->
         <div>
-          <h4 class="text-xs uppercase tracking-widest font-extrabold text-white mb-5">Hubungi Kami</h4>
-          <ul class="space-y-4">
-            <li class="flex items-start gap-3 text-xs text-primary-200/70 font-light leading-relaxed">
-              <MapPin :size="14" class="mt-0.5 shrink-0 text-warm-300" />
-              <span>Jl. Raya Katekan No. 12, Kec. Gantiwarno, Kabupaten Klaten, Jawa Tengah</span>
+          <h4 class="text-[9px] uppercase tracking-widest font-extrabold text-slate-450 mb-5">Kontak &amp; Alamat</h4>
+          <ul class="space-y-3.5 font-semibold text-xs text-slate-350">
+            <li class="flex items-start gap-2.5">
+              <MapPin :size="14" class="text-emerald-400 mt-0.5 shrink-0" />
+              <span class="leading-relaxed">Dusun Menggah, Desa Katekan, Kec. Ngawi, Kab. Ngawi, Jawa Timur 63261</span>
             </li>
-            <li class="flex items-center gap-3 text-xs text-primary-200/70 font-light">
-              <Phone :size="14" class="shrink-0 text-warm-300" />
-              <span>+62 812-3456-7890</span>
+            <li class="flex items-center gap-2.5">
+              <Phone :size="14" class="text-emerald-400 shrink-0" />
+              <a href="https://wa.me/6281234567890" target="_blank" class="hover:text-emerald-350 transition-colors">+62 812-3456-7890</a>
             </li>
-            <li class="flex items-center gap-3 text-xs text-primary-200/70 font-light">
-              <Mail :size="14" class="shrink-0 text-warm-300" />
-              <span>pemdes@katekan.desa.id</span>
-            </li>
-            <li class="flex items-center gap-3 text-xs text-primary-200/70 font-light">
-              <Globe :size="14" class="shrink-0 text-warm-300" />
-              <span>www.katekan.desa.id</span>
+            <li class="flex items-center gap-2.5">
+              <Mail :size="14" class="text-emerald-400 shrink-0" />
+              <a href="mailto:dusunmenggah@gmail.com" class="hover:text-emerald-350 transition-colors">dusunmenggah@gmail.com</a>
             </li>
           </ul>
+
+          <!-- Social Media Group -->
+          <div class="mt-6 flex items-center gap-2">
+            <a
+              v-for="social in socialLinks"
+              :key="social.label"
+              :href="social.href"
+              target="_blank"
+              :title="social.label"
+              class="w-9 h-9 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center transition-all hover:scale-105 hover:bg-emerald-800 hover:border-transparent hover:text-white"
+            >
+              <component :is="social.icon" :size="14" class="text-slate-350" />
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Bottom bar -->
-    <div class="border-t border-white/5 relative z-10 bg-primary-950/60 backdrop-blur-sm">
-      <div class="container-main py-6 px-6 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p class="text-[10px] text-primary-400 font-light tracking-wide">
-          &copy; {{ currentYear }} Pemerintah Desa Katekan. Seluruh Hak Cipta Dilindungi.
+    <div class="border-t border-white/5 relative z-10 bg-slate-950/50">
+      <div class="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] text-slate-500 font-extrabold uppercase tracking-wide">
+        <p>
+          &copy; {{ currentYear }} Dusun Menggah, Desa Katekan. Seluruh Hak Cipta Dilindungi.
         </p>
+        <div class="flex items-center gap-3">
+          <span class="text-slate-800">|</span>
+          <RouterLink :to="authStore.isAuthenticated ? '/admin' : '/login'" class="text-slate-600 hover:text-emerald-400 transition-colors normal-case font-medium">
+            admin
+          </RouterLink>
+        </div>
       </div>
     </div>
   </footer>

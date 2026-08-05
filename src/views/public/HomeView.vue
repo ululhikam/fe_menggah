@@ -3,528 +3,648 @@ import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import {
   MapPin,
-  ChevronLeft,
+  Megaphone,
+  Calendar,
+  Newspaper,
+  ArrowRight,
+  ArrowLeft,
+  Clock,
+  Plus,
   ChevronRight,
-  FileText,
-  Map,
-  MessageSquare,
-  Instagram,
-  Twitter,
-  Facebook,
-  Users,
-  Megaphone
+  Mail,
+  Send
 } from 'lucide-vue-next'
 import api from '@/lib/api'
 
-// Statistics bar under Hero
-const heroStats = ref([
-  { title: '2.8k+', desc: 'Estimasi Populasi Desa' },
-  { title: '1.2k+', desc: 'Kepadatan Penduduk (jiwa/km²)' },
-  { title: '100%', desc: 'Kearifan Lokal & Gotong Royong' },
-])
+// Loading states
+const loadingNews = ref(true)
+const loadingAgenda = ref(true)
+const loadingGallery = ref(true)
 
-// Services/Destinations cards (Section 3: Top Destinations)
-const destinations = ref([
-  {
-    title: 'Pasar Menggah',
-    tag: 'Pusat Ekonomi',
-    rating: '★ 4.9 (240)',
-    location: 'Dusun Menggah, Katekan',
-    image: '/images/nature_spot_ricefields.png'
-  },
-  {
-    title: 'Ndeshirt Konveksi',
-    tag: 'Industri Kreatif',
-    rating: '★ 4.8 (115)',
-    location: 'UMKM Sablon, Menggah',
-    image: '/images/nature_spot_camp.png'
-  },
-  {
-    title: 'Masjid Menggah',
-    tag: 'Sosial & Religi',
-    rating: '★ 5.0 (420)',
-    location: 'Pusat Keagamaan, Menggah',
-    image: '/images/misty_mountain_hero.png'
-  },
-  {
-    title: 'Luapan Avur Sangiran',
-    tag: 'Mitigasi Bencana',
-    rating: '★ 4.7 (80)',
-    location: 'Titik Pengawasan Sungai',
-    image: '/images/village_landscape_map.png'
-  }
-])
-
-// Benefits (Section 2 right side)
-const benefits = ref([
-  {
-    title: 'Layanan Mandiri Cepat',
-    desc: 'Ajukan surat pengantar kependudukan, domisili, SKCK, dan SKTM secara mandiri dari rumah dalam 5 menit.',
-    icon: FileText
-  },
-  {
-    title: 'UMKM & Industri Kreatif',
-    desc: 'Mendorong pemasaran industri konveksi, pakaian jadi, jasa sablon, serta hasil komoditas tani warga.',
-    icon: Map
-  },
-  {
-    title: 'Aduan Mitigasi Siaga',
-    desc: 'Sampaikan laporan kondisi tanggul sungai Avur Sangiran atau usulan pembangunan langsung ke perangkat desa.',
-    icon: MessageSquare
-  }
-])
-
-// Packages Section (Section 4)
-const packages = ref([
-  {
-    title: 'Geografis & Lingkungan',
-    desc: 'Dusun Menggah berada di dataran rendah subur Kecamatan Gantiwarno, Klaten, berbatasan langsung dengan Sleman & Gunungkidul DIY.',
-    image: '/images/nature_spot_ricefields.png',
-    icon: MapPin
-  },
-  {
-    title: 'Sosial & Ekonomi',
-    desc: 'Mata pencaharian utama pertanian (padi & palawija), peternakan, serta industri kreatif konveksi terpadu dengan kebersamaan gotong royong.',
-    image: '/images/nature_spot_camp.png',
-    icon: Users
-  }
-])
-
-// Form state for consultation/booking panel
-const formName = ref('')
-const formPhone = ref('')
-const formDusun = ref('Menggah')
-const formService = ref('SKCK')
-const formMessage = ref('')
-const formSubmitted = ref(false)
-
-const handleFormSubmit = () => {
-  formSubmitted.value = true
-  setTimeout(() => {
-    formName.value = ''
-    formPhone.value = ''
-    formMessage.value = ''
-    formSubmitted.value = false
-    alert('Permohonan layanan/pengaduan Anda telah dikirim ke perangkat desa. Kami akan menghubungi Anda segera melalui WhatsApp.')
-  }, 1000)
-}
-
+// API Data
+const newsList = ref<any[]>([])
+const agendaList = ref<any[]>([])
+const galleryList = ref<any[]>([])
 const activeAnnouncements = ref<any[]>([])
 
-async function fetchAnnouncements() {
-  try {
-    const response = await api.get('/public/announcements')
-    if (response.data?.success && Array.isArray(response.data?.data) && response.data.data.length > 0) {
-      activeAnnouncements.value = response.data.data
-    }
-  } catch (err) {
-    console.warn('Gagal memuat pengumuman dari server, menggunakan data simulasi:', err)
+// Removed fallback arrays as we are strictly using API
+
+const stats = [
+  { value: '50+', label: 'Hektar Sawah Produktif' },
+  { value: '200+', label: 'Kepala Keluarga' },
+  { value: '700+', label: 'Total Warga Dusun' },
+  { value: '100%', label: 'Semangat Gotong Royong' },
+]
+
+// For gallery slider scrolling
+const sliderContainer = ref<HTMLElement | null>(null)
+
+function scrollSlider(direction: 'left' | 'right') {
+  if (sliderContainer.value) {
+    const scrollAmount = 320 // width of a card + gap
+    sliderContainer.value.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth'
+    })
   }
+}
+
+async function fetchData() {
+  // Announcements
+  try {
+    const res = await api.get('/public/announcements')
+    if (res.data?.success && Array.isArray(res.data?.data)) {
+      activeAnnouncements.value = res.data.data.slice(0, 3)
+    }
+  } catch {}
+
+  // News
+  try {
+    const res = await api.get('/public/news?page=1&per_page=3')
+    if (res.data?.success && Array.isArray(res.data?.data?.items)) {
+      newsList.value = res.data.data.items
+    }
+  } catch {
+    newsList.value = []
+  } finally {
+    loadingNews.value = false
+  }
+
+  // Agenda
+  try {
+    const res = await api.get('/public/agenda?upcoming=true')
+    if (res.data?.success && Array.isArray(res.data?.data?.items)) {
+      agendaList.value = res.data.data.items.slice(0, 3)
+    }
+  } catch {
+    agendaList.value = []
+  } finally {
+    loadingAgenda.value = false
+  }
+
+  // Gallery
+  try {
+    const res = await api.get('/public/gallery?page=1&per_page=6')
+    if (res.data?.success && Array.isArray(res.data?.data?.items)) {
+      galleryList.value = res.data.data.items
+    }
+  } catch {
+    galleryList.value = []
+  } finally {
+    loadingGallery.value = false
+  }
+}
+
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+function getShortMonth(dateStr: string) {
+  return new Date(dateStr).toLocaleString('id-ID', { month: 'short' })
+}
+
+function getDayNum(dateStr: string) {
+  return new Date(dateStr).getDate()
 }
 
 onMounted(() => {
-  fetchAnnouncements()
+  fetchData()
 })
 </script>
 
 <template>
-  <div class="bg-[#f8f9fa] text-slate-800 min-h-screen font-sans antialiased selection:bg-slate-800 selection:text-white">
+  <div class="min-h-screen bg-[#FAF9F6] text-slate-800 font-sans overflow-x-hidden relative selection:bg-green-100 selection:text-green-800">
     
+    <!-- Decorative organic background features -->
+    <div class="absolute top-[10%] left-[-100px] w-[350px] h-[350px] bg-green-200/20 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute top-[40%] right-[-150px] w-[450px] h-[450px] bg-emerald-100/30 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] bg-amber-100/30 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <!-- Floating Sparkles & Plus Accents -->
+    <div class="absolute top-28 left-[10%] text-slate-300 animate-pulse pointer-events-none"><Plus :size="24" class="stroke-[1.5]" /></div>
+    <div class="absolute top-[45%] left-[8%] text-slate-300 pointer-events-none"><Plus :size="16" class="stroke-[1.5]" /></div>
+    <div class="absolute top-36 right-[12%] text-slate-300 animate-bounce duration-[4s] pointer-events-none"><Plus :size="20" class="stroke-[1.5]" /></div>
+    <div class="absolute top-[65%] right-[6%] text-slate-300 pointer-events-none"><Plus :size="18" class="stroke-[1.5]" /></div>
+
     <!-- ===== HERO SECTION ===== -->
-    <section class="px-4 sm:px-6 lg:px-8 pt-24 pb-8 bg-[#f8f9fa]">
-      <div class="relative bg-slate-900 text-white min-h-[85vh] flex flex-col justify-between overflow-hidden rounded-[2.5rem] shadow-xl">
-        <!-- Background Image with Overlay -->
-        <div class="absolute inset-0 z-0">
-          <img 
-            src="/images/hero.jpg" 
-            alt="Scenic Menggah" 
-            class="w-full h-full object-cover object-center opacity-65 scale-105 hover:scale-100 transition-transform duration-[1.2s] ease-out"
-          />
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/30 to-transparent"></div>
-        </div>
-
-        <!-- Spacer for Floating Navbar -->
-        <div class="h-20"></div>
-
-        <!-- Hero Main Content -->
-        <div class="container-main px-6 md:px-16 relative z-10 flex-1 flex flex-col justify-center py-16 md:py-24 text-center">
-          <div class="max-w-4xl mx-auto">
-            <!-- Huge, heavy bold title matching WANDER style -->
-            <h1 class="text-6xl sm:text-8xl lg:text-9xl font-extrabold uppercase tracking-tighter leading-none mb-3">
-              Menggah<span class="text-warm-400">.</span>
-            </h1>
-            
-            <p class="text-xs sm:text-sm uppercase tracking-[0.25em] text-white/90 font-bold mb-8">
-              Dusun Menggah, Desa Katekan, Gantiwarno, Klaten
-            </p>
-
-            <p class="text-sm sm:text-base text-slate-200 font-normal leading-relaxed max-w-xl mx-auto mb-10 opacity-90">
-              Pusat perekonomian agraris dan industri kreatif konveksi terpadu dengan kearifan lokal gotong royong yang erat.
-            </p>
-
-            <!-- Pill Buttons -->
-            <div class="flex flex-wrap items-center justify-center gap-4">
-              <RouterLink 
-                to="/layanan" 
-                class="bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-full transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-md shadow-white/5"
-              >
-                Ajukan Surat Mandiri
-              </RouterLink>
-              <RouterLink 
-                to="/profil" 
-                class="border border-white/40 hover:border-white bg-transparent hover:bg-white/10 text-white font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-full transition-all duration-300 hover:scale-[1.03] active:scale-95"
-              >
-                Profil Dusun
-              </RouterLink>
-            </div>
-          </div>
-        </div>
-
-        <!-- bottom spacer -->
-        <div class="h-10"></div>
-      </div>
-    </section>
-
-    <!-- ===== SECTION: PENGUMUMAN PENTING ===== -->
-    <section v-if="activeAnnouncements.length > 0" class="px-4 sm:px-6 lg:px-8 -mt-6 mb-8 relative z-20 max-w-7xl mx-auto">
-      <div class="bg-amber-500/10 border border-amber-500/20 backdrop-blur-md rounded-[1.8rem] p-6 shadow-sm">
-        <div class="flex items-start gap-4">
-          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 flex items-center justify-center shrink-0">
-            <Megaphone :size="20" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-amber-500 text-white mb-2">
-              Pengumuman Penting
+    <section class="relative pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto text-center space-y-8">
+        
+        <!-- Announcement Alert Pill -->
+        <div v-if="activeAnnouncements.length > 0" class="inline-flex max-w-full">
+          <RouterLink 
+            to="/pengumuman"
+            class="flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 shadow-sm text-xs font-bold text-emerald-800 hover:bg-emerald-100/70 transition-all duration-300"
+          >
+            <span class="flex h-2 w-2 relative">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <div class="space-y-3">
-              <div v-for="ann in activeAnnouncements" :key="ann.id" class="border-b border-amber-500/10 pb-3 last:border-b-0 last:pb-0">
-                <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 tracking-tight">{{ ann.title }}</h4>
-                <p class="text-[11px] sm:text-xs text-slate-650 leading-relaxed font-light mt-1">{{ ann.content }}</p>
-                <div class="flex items-center gap-2 mt-2 text-[9px] text-slate-400 font-bold">
-                  <span>Mulai: {{ new Date(ann.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}</span>
-                  <span v-if="ann.end_date">&bull; Selesai: {{ new Date(ann.end_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+            <Megaphone :size="13" class="shrink-0 text-emerald-700" />
+            <span class="truncate font-semibold text-slate-700">
+              Pengumuman: {{ activeAnnouncements[0].title }}
+            </span>
+            <ChevronRight :size="14" class="text-slate-400" />
+          </RouterLink>
         </div>
-      </div>
-    </section>
 
-    <!-- ===== SECTION 2: WHY CHOOSE US ===== -->
-    <section class="section bg-[#f8f9fa] py-20 border-b border-slate-200/50">
-      <div class="container-main px-6 md:px-16">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
-          
-          <!-- Left Column: Copy, Socials & Stats -->
-          <div class="lg:col-span-6 space-y-8">
-            <div class="space-y-4">
-              <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
-                Mengapa Memilih Portal Digital Dusun Menggah?
-              </h2>
-              <p class="text-sm text-slate-500 leading-relaxed font-normal">
-                Kami mendigitalisasi pelayanan publik kependudukan desa Katekan, mengintegrasikan pemasaran UMKM konveksi &amp; sablon, serta meningkatkan kesiapsiagaan mitigasi tanggul sungai Avur Sangiran secara real-time.
+        <!-- Headline -->
+        <h1 class="text-4xl sm:text-6xl lg:text-7xl font-light tracking-tight leading-[1.08] text-slate-900 max-w-4xl mx-auto font-sans">
+          Membawa Pertumbuhan Baru Bagi <br class="hidden sm:inline" />
+          <span class="font-semibold text-emerald-800 italic font-serif">Pertanian Menggah</span>.
+        </h1>
+
+        <!-- Subtext -->
+        <p class="text-slate-500 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed font-medium">
+          Mengembangkan potensi agraris lokal secara berkelanjutan melalui sinergi kearifan budaya dusun dengan inovasi dan teknologi modern demi kesejahteraan warga.
+        </p>
+
+        <!-- CTA Action -->
+        <div class="flex justify-center pt-2">
+          <RouterLink 
+            to="/profil" 
+            class="group bg-slate-950 hover:bg-slate-900 text-white font-extrabold text-xs uppercase tracking-widest px-8 py-4 rounded-full transition-all duration-300 hover:scale-[1.03] active:scale-95 shadow-lg shadow-slate-950/15 flex items-center gap-2"
+          >
+            Pelajari Profil
+            <ArrowRight :size="14" class="group-hover:translate-x-1 transition-transform" />
+          </RouterLink>
+        </div>
+
+        <!-- Large Hero Showcase Image -->
+        <div class="pt-6">
+          <div class="relative w-full aspect-[21/9] rounded-[2rem] sm:rounded-[3.5rem] overflow-hidden shadow-2xl shadow-slate-900/10 border border-white/50 group bg-slate-100">
+            <img 
+              src="/images/hero_agri_landscape.png" 
+              alt="Lush green agricultural fields of Dusun Menggah" 
+              class="w-full h-full object-cover object-center scale-100 group-hover:scale-[1.03] transition-transform duration-[2.5s] ease-out"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/10 to-transparent"></div>
+            
+            <!-- Hero Overlay text -->
+            <div class="absolute bottom-6 left-6 sm:bottom-12 sm:left-12 text-left text-white max-w-md space-y-1 z-10">
+              <h3 class="font-serif italic text-xl sm:text-2xl font-light">Perjalanan Menuju Kelestarian.</h3>
+              <p class="text-[10px] sm:text-xs text-slate-350 leading-relaxed font-semibold tracking-wide uppercase">
+                Temukan kearifan lokal dalam praktik pertanian berkelanjutan kami.
               </p>
             </div>
-
-            <!-- Social Media Icons in Circles -->
-            <div class="flex items-center gap-3">
-              <a href="#" class="w-10 h-10 rounded-full border border-slate-300 hover:border-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-all">
-                <Instagram :size="16" />
-              </a>
-              <a href="#" class="w-10 h-10 rounded-full border border-slate-300 hover:border-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-all">
-                <Twitter :size="16" />
-              </a>
-              <a href="#" class="w-10 h-10 rounded-full border border-slate-300 hover:border-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-all">
-                <Facebook :size="16" />
-              </a>
-            </div>
-
-            <!-- Stats -->
-            <div class="grid grid-cols-3 gap-8 pt-8 border-t border-slate-200">
-              <div v-for="(stat, idx) in heroStats" :key="idx" class="space-y-1">
-                <h3 class="text-3xl font-extrabold text-slate-900 tracking-tight">{{ stat.title }}</h3>
-                <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold leading-tight">
-                  {{ stat.desc }}
-                </p>
+            
+            <!-- Floating pin location badge in hero -->
+            <div class="absolute bottom-6 right-6 sm:bottom-12 sm:right-12 z-10 hidden sm:block">
+              <div class="bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full flex items-center gap-2">
+                <MapPin :size="12" class="text-white" />
+                <span class="text-[10px] font-bold tracking-widest text-white uppercase">Menggah, Katekan, Ngawi</span>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Right Column: Vertical Cards Stack -->
-          <div class="lg:col-span-6 space-y-4">
-            <div 
-              v-for="(benefit, idx) in benefits" 
-              :key="idx" 
-              class="bg-slate-700/90 text-white rounded-2xl p-6 flex items-start gap-5 shadow-sm hover:shadow-md transition-all duration-300"
-            >
-              <div class="w-12 h-12 rounded-[1rem] bg-white/10 text-white flex items-center justify-center shrink-0">
-                <component :is="benefit.icon" :size="20" />
-              </div>
-              <div>
-                <h3 class="text-sm uppercase tracking-wider font-extrabold mb-1">
-                  {{ benefit.title }}
-                </h3>
-                <p class="text-xs text-slate-200/80 leading-relaxed font-light">
-                  {{ benefit.desc }}
-                </p>
-              </div>
-            </div>
-          </div>
+      </div>
+    </section>
 
+    <!-- ===== STATS SECTION ===== -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-b border-slate-200/60">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 text-center">
+        <div 
+          v-for="(stat, index) in stats" 
+          :key="stat.label" 
+          class="space-y-1 relative"
+          :class="{'md:border-r border-slate-200/60': index < stats.length - 1}"
+        >
+          <h2 class="text-3xl sm:text-5xl font-light text-slate-900 tracking-tight font-serif italic">{{ stat.value }}</h2>
+          <p class="text-[10px] sm:text-[11px] uppercase tracking-widest text-slate-400 font-extrabold leading-tight">{{ stat.label }}</p>
         </div>
       </div>
     </section>
 
-    <!-- ===== SECTION 3: TOP DESTINATIONS ===== -->
-    <section class="section bg-[#f8f9fa] py-20 border-b border-slate-200/50">
-      <div class="container-main px-6 md:px-16">
+    <!-- ===== INTRODUCTION SECTION ===== -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+      <div class="grid lg:grid-cols-12 gap-12 items-start">
         
-        <!-- Header: Title left, description right -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div class="max-w-md">
-            <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">
-              Layanan &amp; Potensi Pilihan
+        <!-- Left: Category list -->
+        <div class="lg:col-span-3 space-y-4 pt-1 border-t-2 border-slate-900/10">
+          <span class="text-[11px] uppercase tracking-widest font-black text-emerald-800 block">Selayang Pandang</span>
+          <div class="space-y-2 hidden lg:block">
+            <span class="block text-xs font-bold text-slate-400 uppercase tracking-widest">2026 • Pertanian Dusun</span>
+            <span class="block text-xs font-bold text-slate-400 uppercase tracking-widest">Kearifan Lokal</span>
+            <span class="block text-xs font-bold text-slate-400 uppercase tracking-widest">Agroteknologi Organik</span>
+          </div>
+        </div>
+
+        <!-- Right: Description -->
+        <div class="lg:col-span-9 space-y-8">
+          <h2 class="text-2xl sm:text-4xl lg:text-[2.75rem] leading-[1.15] font-light text-slate-900 tracking-tight">
+            Meskipun ada kemajuan teknologi modern, pertanian Dusun Menggah tetap berakar pada <span class="font-serif italic font-medium text-emerald-850">kearifan lokal</span> dan semangat <span class="font-serif italic font-medium text-emerald-850">gotong royong</span>.
+          </h2>
+          
+          <div class="grid md:grid-cols-12 gap-6 pt-4">
+            <div class="md:col-span-8 space-y-4">
+              <p class="text-slate-500 text-sm leading-relaxed text-justify font-medium">
+                Dusun Menggah merupakan salah satu wilayah administratif Desa Katekan, Ngawi yang subur. Kami mengintegrasikan tradisi bertani turun-temurun dengan inovasi terkini. Mahasiswa KKN bersama warga aktif mendorong implementasi pertanian berbasis lingkungan untuk menjaga kelestarian tanah serta meningkatkan nilai ekonomi komoditas lokal.
+              </p>
+            </div>
+            <div class="md:col-span-4 flex flex-col gap-3 justify-center lg:items-end">
+              <RouterLink 
+                to="/profil/potensi" 
+                class="inline-flex items-center justify-center gap-1.5 text-[10px] font-extrabold uppercase tracking-widest text-slate-900 hover:text-emerald-800 bg-white border border-slate-200/80 px-5 py-3 rounded-full hover:bg-slate-50 transition-all text-center"
+              >
+                Komoditas Unggulan
+              </RouterLink>
+              <RouterLink 
+                to="/profil/visi-misi" 
+                class="inline-flex items-center justify-center gap-1.5 text-[10px] font-extrabold uppercase tracking-widest text-slate-900 hover:text-emerald-800 bg-white border border-slate-200/80 px-5 py-3 rounded-full hover:bg-slate-50 transition-all text-center"
+              >
+                Visi & Misi Dusun
+              </RouterLink>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== HORIZONTAL CAROUSEL SECTION ===== -->
+    <section class="py-16 bg-[#FAF9F6] border-y border-slate-200/40 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+          <div>
+            <span class="text-[10px] uppercase tracking-widest font-black text-emerald-800 block mb-1">Galeri Dokumentasi</span>
+            <h2 class="text-3xl font-light tracking-tight text-slate-950 font-sans">
+              Dokumentasi Kegiatan & <span class="font-serif italic font-medium">Potensi Menggah</span>
             </h2>
           </div>
-          <div class="max-w-sm">
-            <p class="text-xs text-slate-500 leading-relaxed font-normal">
-              Mulai dari fasilitasi transaksi Pasar Menggah, pertumbuhan usaha kreatif konveksi, hingga koordinasi mitigasi pengawasan tanggul air.
+          
+          <!-- Navigation buttons -->
+          <div class="flex items-center gap-3">
+            <button 
+              @click="scrollSlider('left')"
+              class="w-10 h-10 rounded-full border border-slate-250 flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all duration-300 active:scale-90"
+              aria-label="Previous"
+            >
+              <ArrowLeft :size="16" />
+            </button>
+            <button 
+              @click="scrollSlider('right')"
+              class="w-10 h-10 rounded-full border border-slate-250 flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all duration-300 active:scale-90"
+              aria-label="Next"
+            >
+              <ArrowRight :size="16" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Slider Container -->
+        <div 
+          ref="sliderContainer" 
+          class="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide pb-6"
+        >
+          
+          <!-- Static/Highlighted Card: "Mulai Sekarang" -->
+          <div class="snap-start shrink-0 w-[290px] sm:w-[320px] bg-white rounded-3xl p-6 border border-slate-200/50 flex flex-col justify-between hover:shadow-lg transition-all duration-300 shadow-sm">
+            <div class="space-y-4">
+              <span class="text-[9px] uppercase tracking-widest font-extrabold bg-slate-950 text-white px-2 py-0.5 rounded-full inline-block">Galeri Dusun</span>
+              <h3 class="text-xl font-semibold leading-snug text-slate-950">
+                Eksplorasi Dokumentasi Dusun Menggah
+              </h3>
+              <p class="text-slate-450 text-xs leading-relaxed font-semibold">
+                Lihat seluruh kumpulan galeri dokumentasi gotong royong, kebudayaan, fasilitas, dan kegiatan warga.
+              </p>
+            </div>
+            
+            <div class="pt-6 space-y-4">
+              <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-100">
+                <img src="/images/tractor_spraying.png" alt="Farming" class="w-full h-full object-cover" />
+              </div>
+              <RouterLink 
+                to="/galeri" 
+                class="group w-full py-3 px-4 bg-slate-950 hover:bg-slate-900 text-white text-xs uppercase tracking-widest font-bold rounded-2xl transition-all duration-200 flex items-center justify-center gap-1.5 shadow"
+              >
+                Lihat Semua Galeri
+                <ArrowRight :size="13" class="group-hover:translate-x-1 transition-transform" />
+              </RouterLink>
+            </div>
+          </div>
+
+          <!-- Dynamic Cards -->
+          <div v-if="loadingGallery" class="flex gap-6">
+            <div v-for="i in 4" :key="i" class="w-[290px] sm:w-[320px] aspect-[4/5] bg-white rounded-3xl animate-pulse border border-slate-200/50"></div>
+          </div>
+
+          <template v-else>
+            <div 
+              v-for="gal in galleryList" 
+              :key="gal.id"
+              class="snap-start shrink-0 w-[290px] sm:w-[320px] aspect-[4/5] rounded-3xl overflow-hidden relative group border border-slate-200/40 shadow-sm"
+            >
+              <img 
+                :src="gal.image_url" 
+                :alt="gal.title" 
+                class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" 
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+              
+              <div class="absolute bottom-6 left-6 right-6 text-white space-y-1.5">
+                <span class="text-[9px] uppercase tracking-widest font-extrabold bg-white/20 border border-white/10 px-2.5 py-0.5 rounded-full backdrop-blur-sm inline-block">
+                  {{ gal.category || 'Galeri' }}
+                </span>
+                <h4 class="text-sm font-semibold leading-snug line-clamp-2">{{ gal.title }}</h4>
+              </div>
+            </div>
+          </template>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== MID-PAGE CALLOUT BANNER ===== -->
+    <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="relative w-full min-h-[50vh] sm:min-h-[60vh] rounded-[2rem] sm:rounded-[3rem] overflow-hidden flex flex-col justify-end p-8 sm:p-16 text-left group shadow-xl">
+        
+        <!-- Image background -->
+        <img 
+          src="/images/nature_spot_ricefields.png" 
+          alt="Green nature fields backdrop" 
+          class="absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-[1.02] transition-transform duration-[3s]" 
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+
+        <div class="relative z-10 max-w-2xl space-y-6">
+          <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-3.5 py-1.5 rounded-full backdrop-blur-md">
+            <MapPin :size="12" class="text-white" />
+            <span class="text-[9px] font-bold tracking-widest text-white uppercase">Dusun Menggah, Katekan, Ngawi</span>
+          </div>
+          
+          <h2 class="text-2xl sm:text-4xl lg:text-5xl font-light leading-tight text-white">
+            Kolaborasi & Belajar Bersama <br class="hidden sm:inline" />
+            Para <span class="font-serif italic font-medium text-green-300">Ahli & Praktisi</span> Pertanian.
+          </h2>
+
+          <div class="flex items-center gap-4 pt-2">
+            <RouterLink 
+              to="/kontak"
+              class="h-14 w-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-[10px] tracking-widest uppercase flex items-center justify-center shadow-lg shadow-emerald-500/30 hover:scale-110 active:scale-95 transition-all duration-300"
+            >
+              GABUNG
+            </RouterLink>
+            <span class="text-xs text-slate-200 font-semibold tracking-wide">
+              Hubungi pengurus dusun untuk program kemitraan kelompok tani.
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== POTENSI SEKTOR / SOLUTIONS SECTION ===== -->
+    <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="space-y-16">
+        
+        <!-- Section Header -->
+        <div class="grid md:grid-cols-12 gap-6 items-end">
+          <div class="md:col-span-8 space-y-2">
+            <span class="text-[10px] uppercase tracking-widest font-black text-emerald-800 block">Sektor Unggulan & Inovasi</span>
+            <h2 class="text-3xl sm:text-5xl font-light tracking-tight text-slate-900 font-sans">
+              Solusi Cerdas Untuk Hasil <span class="font-serif italic font-medium">Tani Optimal</span>
+            </h2>
+          </div>
+          <div class="md:col-span-4 lg:pl-8">
+            <p class="text-slate-400 text-xs leading-relaxed font-semibold">
+              Mendorong implementasi metode pertanian modern untuk meningkatkan efisiensi kerja, produktivitas, serta keberlanjutan alam Dusun Menggah.
             </p>
           </div>
         </div>
 
-        <!-- 4 Vertical Cards Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div 
-            v-for="(dest, idx) in destinations" 
-            :key="idx" 
-            class="group relative h-[360px] overflow-hidden rounded-3xl bg-slate-900 text-white shadow-md hover:shadow-xl transition-all duration-500 flex flex-col justify-end p-5"
-          >
-            <!-- Background Image -->
-            <img 
-              :src="dest.image" 
-              :alt="dest.title" 
-              class="absolute inset-0 w-full h-full object-cover opacity-75 group-hover:scale-105 transition-transform duration-700 ease-out z-0"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent z-10"></div>
-
-            <!-- Floating tag on top-right -->
-            <span class="absolute top-4 right-4 bg-white/95 text-slate-900 text-[9px] uppercase tracking-wider font-extrabold px-3 py-1 rounded-full shadow-sm z-20">
-              {{ dest.tag }}
-            </span>
-
-            <!-- Bottom content -->
-            <div class="relative z-20 space-y-2">
-              <h3 class="text-lg font-bold tracking-wide">
-                {{ dest.title }}
-              </h3>
-              
-              <div class="flex items-center justify-between text-[10px] text-slate-200/90 pt-1">
-                <span class="font-bold">{{ dest.rating }}</span>
-                <span class="flex items-center gap-1">
-                  <MapPin :size="10" /> {{ dest.location }}
-                </span>
-              </div>
+        <!-- Three Columns Grid -->
+        <div class="grid md:grid-cols-3 gap-8">
+          
+          <!-- Card 1: Pertanian Presisi -->
+          <div class="bg-white rounded-3xl overflow-hidden border border-slate-200/50 shadow-sm hover:shadow-md transition-all duration-300 p-6 space-y-6">
+            <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100">
+              <img src="/images/smart_farming_precision.png" alt="Smart precision farming tablet representation" class="w-full h-full object-cover" />
+            </div>
+            <div class="space-y-3">
+              <h3 class="text-lg font-semibold text-slate-950">Pertanian Presisi</h3>
+              <p class="text-slate-500 text-xs leading-relaxed font-medium">
+                Penerapan analisis data tanah untuk takaran pupuk organik yang presisi, meningkatkan kualitas bulir padi organik Menggah secara optimal.
+              </p>
             </div>
           </div>
+
+          <!-- Card 2: Pengawasan Drone -->
+          <div class="bg-white rounded-3xl overflow-hidden border border-slate-200/50 shadow-sm hover:shadow-md transition-all duration-300 p-6 space-y-6">
+            <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100">
+              <img src="/images/drone_crop_surveillance.png" alt="Drone surveillance over crop fields" class="w-full h-full object-cover" />
+            </div>
+            <div class="space-y-3">
+              <h3 class="text-lg font-semibold text-slate-950">Pemantauan Udara</h3>
+              <p class="text-slate-500 text-xs leading-relaxed font-medium">
+                Penggunaan teknologi drone/UAV untuk pemetaan kesehatan tanaman padi dan deteksi dini penyebaran hama di seluruh hamparan persawahan.
+              </p>
+            </div>
+          </div>
+
+          <!-- Card 3: Irigasi Otomatis -->
+          <div class="bg-white rounded-3xl overflow-hidden border border-slate-200/50 shadow-sm hover:shadow-md transition-all duration-300 p-6 space-y-6">
+            <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100">
+              <img src="/images/automated_watering_robotic.png" alt="Automated greenhouse watering" class="w-full h-full object-cover" />
+            </div>
+            <div class="space-y-3">
+              <h3 class="text-lg font-semibold text-slate-950">Irigasi Otomatis</h3>
+              <p class="text-slate-500 text-xs leading-relaxed font-medium">
+                Sistem pengairan pintar berbasis kelembaban tanah untuk pembibitan benih, menghemat konsumsi air tanah dan menjaga kualitas persemaian.
+              </p>
+            </div>
+          </div>
+
         </div>
 
-        <!-- Action Row -->
-        <div class="flex items-center justify-between mt-10 pt-4">
-          <RouterLink 
-            to="/layanan" 
-            class="bg-slate-900 hover:bg-slate-800 text-white text-xs uppercase tracking-wider font-bold px-6 py-3 rounded-full transition-all duration-300"
-          >
-            Lihat Semua Layanan
-          </RouterLink>
-          
-          <div class="flex items-center gap-2">
-            <button class="w-10 h-10 rounded-full border border-slate-300 hover:border-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
-              <ChevronLeft :size="18" />
-            </button>
-            <button class="w-10 h-10 rounded-full border border-slate-300 hover:border-slate-800 flex items-center justify-center text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
-              <ChevronRight :size="18" />
-            </button>
+        <!-- Extra Highlight Row matching "Changing The Game" -->
+        <div class="bg-white rounded-[2.5rem] border border-slate-200/50 p-6 sm:p-10 shadow-sm hover:shadow-md transition-all duration-300">
+          <div class="grid md:grid-cols-12 gap-8 items-center">
+            <div class="md:col-span-4 lg:col-span-3">
+              <div class="aspect-[4/3] md:aspect-square w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-100">
+                <img src="/images/greenhouse_nursery_eco.png" alt="Nursery sprouts" class="w-full h-full object-cover" />
+              </div>
+            </div>
+            <div class="md:col-span-8 lg:col-span-9 space-y-4">
+              <h3 class="text-xl sm:text-2xl lg:text-3xl font-light text-slate-950 leading-snug">
+                Mengubah cara kami mengolah tanah melalui penerapan <span class="font-serif italic font-medium text-emerald-800">praktik berkelanjutan</span> dan <span class="font-serif italic font-medium text-emerald-800">teknologi ramah lingkungan</span> demi masa depan ketahanan pangan desa.
+              </h3>
+              <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">
+                Kelompok Tani Dusun Menggah &bull; Program KKN Mahasiswa 2026
+              </p>
+            </div>
           </div>
         </div>
 
       </div>
     </section>
 
-    <!-- ===== SECTION 4: POTENCY GRIDS ===== -->
-    <section class="section bg-[#f8f9fa] py-20 border-b border-slate-200/50">
-      <div class="container-main px-6 md:px-16">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-          
-          <!-- Card 1: Solid block -->
-          <div class="lg:col-span-4 bg-slate-700/80 text-white rounded-3xl p-8 flex flex-col justify-between min-h-[320px]">
-            <div class="space-y-4">
-              <h3 class="text-2xl font-extrabold tracking-tight">Potensi Kreatif &amp; Agraris</h3>
-              <p class="text-xs text-slate-200/80 leading-relaxed font-normal">
-                Sinergi antara sektor agraris sawah subur dan pertumbuhan industri pakaian jadi khas pemukiman warga lokal.
-              </p>
+    <!-- ===== NEWS & AGENDA DYNAMIC SECTION ===== -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-slate-200/60">
+      <div class="grid lg:grid-cols-12 gap-12 items-start">
+        
+        <!-- Left: News (Kabar Dusun) -->
+        <div class="lg:col-span-7 space-y-8">
+          <div class="flex items-end justify-between border-b border-slate-200 pb-4">
+            <div>
+              <span class="text-[10px] uppercase tracking-widest font-black text-emerald-800 block mb-1">Kabar Dusun</span>
+              <h2 class="text-2xl font-semibold text-slate-950 flex items-center gap-2">
+                <Newspaper :size="20" class="text-emerald-700 shrink-0" />
+                Berita & Kegiatan Terbaru
+              </h2>
             </div>
-            <RouterLink 
-              to="/galeri" 
-              class="bg-white hover:bg-slate-100 text-slate-900 text-xs uppercase tracking-wider font-bold px-6 py-3 rounded-full transition-all duration-300 max-w-max"
+            <RouterLink to="/berita" class="text-xs font-bold text-emerald-700 hover:underline shrink-0">Lihat Semua</RouterLink>
+          </div>
+
+          <!-- Loading News Skeletons -->
+          <div v-if="loadingNews" class="space-y-4">
+            <div v-for="i in 3" :key="i" class="h-28 bg-white rounded-3xl border border-slate-200/30 animate-pulse"></div>
+          </div>
+
+          <div v-else class="space-y-4">
+            <RouterLink
+              v-for="news in newsList"
+              :key="news.id"
+              :to="`/berita/${news.slug}`"
+              class="flex gap-4 p-4 sm:p-5 bg-white rounded-3xl border border-slate-200/50 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 group"
             >
-              Lihat Galeri Potensi
+              <!-- Cover image or placeholder icon -->
+              <div class="w-20 h-20 sm:w-24 sm:h-24 bg-slate-100 rounded-2xl overflow-hidden shrink-0 flex items-center justify-center border border-slate-100">
+                <img v-if="news.cover_image_url || news.cover_image" :src="news.cover_image_url || news.cover_image" :alt="news.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                <span v-else class="text-2xl">📰</span>
+              </div>
+              
+              <div class="flex-1 min-w-0 flex flex-col justify-between">
+                <div class="space-y-1">
+                  <span class="text-[10px] text-slate-400 font-bold block flex items-center gap-1.5 uppercase tracking-wide">
+                    <Clock :size="10" /> {{ formatDate(news.published_at || news.created_at) }}
+                  </span>
+                  <h3 class="font-bold text-slate-950 text-xs sm:text-sm leading-snug group-hover:text-emerald-800 transition-colors line-clamp-2">
+                    {{ news.title }}
+                  </h3>
+                </div>
+                <p class="text-slate-450 text-[11px] leading-relaxed line-clamp-1 font-semibold">
+                  {{ news.excerpt }}
+                </p>
+              </div>
             </RouterLink>
           </div>
+        </div>
 
-          <!-- Card 2 & 3: Scenic package cards -->
-          <div 
-            v-for="(pkg, idx) in packages" 
-            :key="idx" 
-            class="lg:col-span-4 group relative rounded-3xl overflow-hidden bg-slate-900 text-white p-6 flex flex-col justify-end min-h-[320px] shadow-sm hover:shadow-md transition-all duration-500"
-          >
-            <!-- Background Image -->
-            <img 
-              :src="pkg.image" 
-              :alt="pkg.title" 
-              class="absolute inset-0 w-full h-full object-cover opacity-75 group-hover:scale-105 transition-transform duration-700 ease-out z-0"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent z-10"></div>
-
-            <!-- Floating circular white icon on top-left -->
-            <div class="absolute top-6 left-6 w-11 h-11 rounded-full bg-white/25 backdrop-blur-sm text-white flex items-center justify-center shadow-sm z-20">
-              <component :is="pkg.icon" :size="16" />
+        <!-- Right: Upcoming Agendas -->
+        <div class="lg:col-span-5 space-y-8">
+          <div class="flex items-end justify-between border-b border-slate-200 pb-4">
+            <div>
+              <span class="text-[10px] uppercase tracking-widest font-black text-emerald-800 block mb-1">Agenda Dusun</span>
+              <h2 class="text-2xl font-semibold text-slate-950 flex items-center gap-2">
+                <Calendar :size="20" class="text-emerald-700 shrink-0" />
+                Agenda Terdekat
+              </h2>
             </div>
-
-            <!-- Bottom content -->
-            <div class="relative z-20 space-y-2">
-              <h3 class="text-lg font-bold tracking-wide">
-                {{ pkg.title }}
-              </h3>
-              <p class="text-[11px] text-slate-200/85 leading-relaxed font-light line-clamp-2">
-                {{ pkg.desc }}
-              </p>
-            </div>
+            <RouterLink to="/agenda" class="text-xs font-bold text-emerald-700 hover:underline shrink-0">Lihat Semua</RouterLink>
           </div>
 
+          <!-- Loading Agendas -->
+          <div v-if="loadingAgenda" class="space-y-4">
+            <div v-for="i in 3" :key="i" class="h-24 bg-white rounded-3xl border border-slate-200/30 animate-pulse"></div>
+          </div>
+
+          <div v-else class="space-y-4">
+            <RouterLink
+              v-for="agenda in agendaList"
+              :key="agenda.id"
+              to="/agenda"
+              class="flex gap-4 p-4 sm:p-5 bg-white rounded-3xl border border-slate-200/50 hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 group"
+            >
+              <!-- Calendar Page style badge -->
+              <div class="w-14 sm:w-16 shrink-0 text-center rounded-2xl overflow-hidden border border-slate-100 bg-white shadow-sm flex flex-col">
+                <div class="bg-emerald-800 text-white text-[9px] font-black uppercase py-1 leading-none group-hover:bg-emerald-900 transition-colors tracking-wider">
+                  {{ getShortMonth(agenda.start_date) }}
+                </div>
+                <div class="py-2.5 text-slate-900 font-extrabold text-xl sm:text-2xl leading-none font-serif italic">
+                  {{ getDayNum(agenda.start_date) }}
+                </div>
+              </div>
+
+              <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+                <div class="space-y-1">
+                  <span class="text-[9px] font-black px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500 inline-block uppercase tracking-wider">
+                    {{ agenda.category || 'Kegiatan' }}
+                  </span>
+                  <h3 class="font-bold text-slate-950 text-xs leading-snug line-clamp-1 group-hover:text-emerald-800 transition-colors">
+                    {{ agenda.title }}
+                  </h3>
+                </div>
+                <span class="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+                  <MapPin :size="10" class="text-slate-400" /> {{ agenda.location || 'Dusun Menggah' }}
+                </span>
+              </div>
+            </RouterLink>
+          </div>
         </div>
+
       </div>
     </section>
 
-    <!-- ===== SECTION 5: HOW IT WORKS ===== -->
-    <section class="section bg-[#f8f9fa] py-20">
-      <div class="container-main px-6 md:px-16">
+    <!-- ===== BOTTOM CALL TO ACTION WITH FORM ===== -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="relative w-full rounded-[2rem] sm:rounded-[3.5rem] overflow-hidden bg-slate-950 text-white p-8 sm:p-16 flex flex-col lg:flex-row lg:items-center justify-between gap-10 shadow-2xl">
         
-        <div class="text-center max-w-xl mx-auto mb-16">
-          <h2 class="text-3xl font-extrabold tracking-tight text-slate-900">
-            Alur Pelayanan Semudah 1-2-3
+        <!-- Subtle image backdrop with overlay -->
+        <img 
+          src="/images/nature_spot_camp.png" 
+          alt="Night scene agriculture fields" 
+          class="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none" 
+        />
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"></div>
+
+        <!-- Left: Call to action title -->
+        <div class="relative z-10 space-y-4 max-w-lg">
+          <h2 class="text-3xl sm:text-5xl font-light leading-tight tracking-tight">
+            Mari Berkolaborasi Membangun <span class="font-serif italic font-medium text-green-300">Dusun Menggah</span>!
           </h2>
-          <div class="w-12 h-[2px] bg-slate-800 mx-auto mt-4"></div>
+          <p class="text-slate-400 text-xs sm:text-sm font-semibold">
+            Masukkan alamat email Anda untuk mendapatkan pemberitahuan agenda kerja gotong royong dan informasi kemitraan pertanian.
+          </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
-          <!-- Connector line for desktop -->
-          <div class="hidden md:block absolute top-8 left-16 right-16 h-[1px] bg-slate-200 z-0"></div>
-
-          <div class="text-center relative z-10 space-y-4">
-            <div class="w-16 h-16 rounded-full bg-white border border-slate-200 text-slate-900 font-extrabold text-lg flex items-center justify-center mx-auto shadow-sm">
-              1
+        <!-- Right: Newsletter form -->
+        <div class="relative z-10 shrink-0 w-full lg:w-auto">
+          <form @submit.prevent class="flex flex-col sm:flex-row gap-3 w-full max-w-md lg:w-[420px]">
+            <div class="relative flex-1">
+              <input 
+                type="email" 
+                placeholder="Alamat email Anda" 
+                class="w-full bg-white/10 backdrop-blur border border-white/20 text-white text-xs px-5 py-4 rounded-full placeholder:text-white/40 focus:outline-none focus:bg-white/20 focus:border-white/50 transition-all font-semibold"
+                required
+              />
+              <Mail :size="16" class="absolute right-5 top-1/2 -translate-y-1/2 text-white/30" />
             </div>
-            <h3 class="text-base font-bold">Pilih Layanan</h3>
-            <p class="text-xs text-slate-500 leading-relaxed font-light max-w-[200px] mx-auto">
-              Tentukan jenis surat pengantar yang ingin diajukan.
-            </p>
-          </div>
-
-          <div class="text-center relative z-10 space-y-4">
-            <div class="w-16 h-16 rounded-full bg-white border border-slate-200 text-slate-900 font-extrabold text-lg flex items-center justify-center mx-auto shadow-sm">
-              2
-            </div>
-            <h3 class="text-base font-bold">Lengkapi Data</h3>
-            <p class="text-xs text-slate-500 leading-relaxed font-light max-w-[200px] mx-auto">
-              Isi formulir berkas kependudukan secara online.
-            </p>
-          </div>
-
-          <div class="text-center relative z-10 space-y-4">
-            <div class="w-16 h-16 rounded-full bg-white border border-slate-200 text-slate-900 font-extrabold text-lg flex items-center justify-center mx-auto shadow-sm">
-              3
-            </div>
-            <h3 class="text-base font-bold">Unduh Dokumen</h3>
-            <p class="text-xs text-slate-500 leading-relaxed font-light max-w-[200px] mx-auto">
-              Surat terverifikasi siap diunduh dalam format PDF.
-            </p>
-          </div>
+            <button 
+              type="submit" 
+              class="bg-white hover:bg-slate-100 text-slate-950 text-xs uppercase tracking-widest font-extrabold px-8 py-4 rounded-full transition-all duration-300 active:scale-95 shadow flex items-center justify-center gap-1.5 shrink-0"
+            >
+              Kirim
+              <Send :size="13" />
+            </button>
+          </form>
         </div>
 
-      </div>
-    </section>
-
-    <!-- ===== SECTION 6: FORM PENGAJUAN ===== -->
-    <section class="section bg-slate-900 text-white py-20">
-      <div class="container-main px-6 md:px-16">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          <!-- Left Column -->
-          <div class="lg:col-span-5 space-y-6">
-            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Butuh Layanan Administrasi Khusus?</h2>
-            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Jika Anda memerlukan layanan administrasi atau ingin melaporkan aduan mitigasi tanggul sungai, silakan kirimkan data melalui formulir ini. Petugas kami akan segera memproses.
-            </p>
-            <ul class="space-y-3">
-              <li class="flex items-center gap-3 text-xs text-slate-300">
-                <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-white shrink-0">✓</span>
-                <span>Proses verifikasi data warga terenkripsi</span>
-              </li>
-              <li class="flex items-center gap-3 text-xs text-slate-300">
-                <span class="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-white shrink-0">✓</span>
-                <span>Bebas dari pungutan biaya tambahan</span>
-              </li>
-            </ul>
-          </div>
-
-          <!-- Right Column (Form Box) -->
-          <div class="lg:col-span-7 bg-white text-slate-800 rounded-3xl p-8 shadow-xl">
-            <form @submit.prevent="handleFormSubmit" class="space-y-5">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                  <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Nama Warga</label>
-                  <input v-model="formName" type="text" required placeholder="Contoh: Budi Santoso" class="w-full rounded-full border border-slate-200 bg-slate-50 focus:bg-white text-slate-800 py-3 px-5 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900" />
-                </div>
-                <div>
-                  <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">No. WhatsApp</label>
-                  <input v-model="formPhone" type="tel" required placeholder="Contoh: 0812345678" class="w-full rounded-full border border-slate-200 bg-slate-50 focus:bg-white text-slate-800 py-3 px-5 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900" />
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                  <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Asal Wilayah</label>
-                  <select v-model="formDusun" class="w-full rounded-full border border-slate-200 bg-slate-50 focus:bg-white text-slate-800 py-3 px-5 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900">
-                    <option value="Menggah">Dusun Menggah</option>
-                    <option value="Katekan">Dusun Katekan Lainnya</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Jenis Keperluan</label>
-                  <select v-model="formService" class="w-full rounded-full border border-slate-200 bg-slate-50 focus:bg-white text-slate-800 py-3 px-5 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900">
-                    <option value="SKCK">Surat SKCK</option>
-                    <option value="DOMISILI">Surat Domisili</option>
-                    <option value="SKTM">Surat SKTM</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">Pesan Detail</label>
-                <textarea v-model="formMessage" rows="3" required placeholder="Tuliskan detail pengajuan Anda..." class="w-full rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white text-slate-800 py-3 px-5 text-xs focus:outline-none focus:ring-1 focus:ring-slate-900 resize-none"></textarea>
-              </div>
-
-              <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-full text-xs uppercase tracking-wider transition-all duration-300">
-                Kirim Permohonan
-              </button>
-            </form>
-          </div>
-
-        </div>
       </div>
     </section>
 
   </div>
 </template>
+
+<style scoped>
+/* Custom local scrollbar hiding for horizontal scroll lists */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+</style>

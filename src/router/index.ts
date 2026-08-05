@@ -20,13 +20,7 @@ const router = createRouter({
       path: '/login',
       name: 'Login',
       component: () => import('@/views/auth/LoginView.vue'),
-      meta: { title: 'Masuk — SIP Desa', guest: true },
-    },
-    {
-      path: '/register',
-      name: 'Register',
-      component: () => import('@/views/auth/RegisterView.vue'),
-      meta: { title: 'Daftar — SIP Desa', guest: true },
+      meta: { title: 'Masuk — Admin Dusun Menggah', guest: true },
     },
 
     // 404 catch-all
@@ -34,7 +28,7 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('@/views/NotFoundView.vue'),
-      meta: { title: 'Halaman Tidak Ditemukan — SIP Desa' },
+      meta: { title: 'Halaman Tidak Ditemukan — Dusun Menggah' },
     },
   ],
 })
