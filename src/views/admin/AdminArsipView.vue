@@ -13,7 +13,7 @@ interface NewsItem {
   title: string
   slug: string
   excerpt?: string
-  cover_image?: string
+  cover_image_url?: string
   is_published: boolean
   published_at?: string
   created_at: string
@@ -185,8 +185,8 @@ loadNews()
         <!-- Thumbnail -->
         <div class="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 shrink-0">
           <img
-            v-if="item.cover_image"
-            :src="item.cover_image"
+            v-if="item.cover_image_url"
+            :src="item.cover_image_url"
             :alt="item.title"
             loading="lazy"
             class="w-full h-full object-cover"

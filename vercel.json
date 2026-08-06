@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://backend-iota-five-99.vercel.app/api/:path*"
+      "destination": "https://backend-eight-alpha-61.vercel.app/api/:path*"
     },
     {
       "source": "/(.*)",

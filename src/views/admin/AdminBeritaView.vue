@@ -14,7 +14,7 @@ interface NewsItem {
   slug: string
   excerpt?: string
   content?: string
-  cover_image?: string
+  cover_image_url?: string
   is_published: boolean
   published_at?: string
   created_at: string
@@ -40,7 +40,7 @@ const form = ref({
   content: '',
   excerpt: '',
   slug: '',
-  cover_image: '',
+  cover_image_url: '',
   is_published: false,
 })
 
@@ -71,7 +71,7 @@ async function loadNews() {
 
 function openCreate() {
   editingItem.value = null
-  form.value = { title: '', content: '', excerpt: '', slug: '', cover_image: '', is_published: false }
+  form.value = { title: '', content: '', excerpt: '', slug: '', cover_image_url: '', is_published: false }
   showModal.value = true
 }
 
@@ -82,7 +82,7 @@ function openEdit(item: NewsItem) {
     content: item.content || '',
     excerpt: item.excerpt || '',
     slug: item.slug,
-    cover_image: item.cover_image || '',
+    cover_image_url: item.cover_image_url || '',
     is_published: item.is_published,
   }
   showModal.value = true
@@ -190,8 +190,8 @@ loadNews()
                   <!-- Cover thumbnail -->
                   <div class="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 shrink-0">
                     <img
-                      v-if="item.cover_image"
-                      :src="item.cover_image"
+                      v-if="item.cover_image_url"
+                      :src="item.cover_image_url"
                       :alt="item.title"
                       class="w-full h-full object-cover"
                       loading="lazy"
@@ -291,7 +291,7 @@ loadNews()
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Foto Cover</label>
                 <ImageUpload
-                  v-model="form.cover_image"
+                  v-model="form.cover_image_url"
                   bucket="media"
                   folder="berita"
                   @error="toast.error($event)"

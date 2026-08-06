@@ -15,7 +15,7 @@ async function handleRegister() {
       nik: form.value.nik,
       role: 'super_admin',
     })
-    router.push('/')
+    router.push('/admin')
   } catch { /* Error handled by store */ }
 }
 </script>

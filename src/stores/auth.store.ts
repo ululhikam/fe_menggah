@@ -5,31 +5,6 @@ import type { Profile } from '@/types/models.types'
 import { UserRole } from '@/types/enums'
 import type { User } from '@supabase/supabase-js'
 
-const mockUsers: Record<string, { user: any, profile: Profile }> = {
-  'superadmin@katekan.desa.id': {
-    user: { id: 'mock-super-admin-id', email: 'superadmin@katekan.desa.id' },
-    profile: {
-      id: 'mock-super-admin-id',
-      nik: '3310000000000001',
-      full_name: 'Super Admin Dusun Menggah',
-      birth_place: 'Klaten',
-      birth_date: '1990-01-01',
-      gender: 'laki-laki' as any,
-      religion: 'islam' as any,
-      marital_status: 'kawin' as any,
-      education: 'S1',
-      occupation: 'Kepala Dusun',
-      address: 'Dusun Menggah RT 01 / RW 01, Katekan, Gantiwarno',
-      family_card_id: 'mock-kk-1',
-      role: UserRole.SUPER_ADMIN,
-      phone: '081234567890',
-      photo_url: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
-  },
-}
-
 export const useAuthStore = defineStore('auth', () => {
   // State
   const user = ref<User | null>(null)
@@ -50,15 +25,6 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       loading.value = true
 
-      // Check for mock session first
-      const savedMockSession = localStorage.getItem('sip_desa_mock_session')
-      if (savedMockSession) {
-        const mockSession = JSON.parse(savedMockSession)
-        user.value = mockSession.user
-        profile.value = mockSession.profile
-        return
-      }
-
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) {
         user.value = session.user
@@ -67,9 +33,6 @@ export const useAuthStore = defineStore('auth', () => {
 
       // Listen for auth state changes
       supabase.auth.onAuthStateChange(async (_event, session) => {
-        // Skip trigger if we have a simulated mock session active
-        if (localStorage.getItem('sip_desa_mock_session')) return
-
         user.value = session?.user || null
         if (session?.user) {
           await fetchProfile()
@@ -94,8 +57,19 @@ export const useAuthStore = defineStore('auth', () => {
       .eq('id', user.value.id)
       .single()
 
-    if (fetchError) {
-      console.error('[Auth] Profile fetch error:', fetchError)
+    if (fetchError || !data) {
+      console.warn('[Auth] Profile missing, creating fallback super_admin profile...')
+      const fallbackProfile = {
+        id: user.value.id,
+        full_name: user.value.user_metadata?.full_name || user.value.email?.split('@')[0] || 'Super Admin',
+        role: UserRole.SUPER_ADMIN,
+      }
+      try {
+        await supabase.from('profiles').upsert(fallbackProfile)
+      } catch (err) {
+        console.warn('[Auth] Could not upsert fallback profile to DB:', err)
+      }
+      profile.value = fallbackProfile as Profile
       return
     }
 
@@ -107,22 +81,7 @@ export const useAuthStore = defineStore('auth', () => {
       loading.value = true
       error.value = null
 
-      // Check for mock credentials first
-      const lowercaseEmail = email.toLowerCase().trim()
-      if (mockUsers[lowercaseEmail]) {
-        if (password === 'password123') {
-          const mockSession = mockUsers[lowercaseEmail]
-          user.value = mockSession.user
-          profile.value = mockSession.profile
-          localStorage.setItem('sip_desa_mock_session', JSON.stringify(mockSession))
-          return
-        } else {
-          error.value = 'Kata sandi simulasi salah'
-          throw new Error('Kata sandi simulasi salah')
-        }
-      }
-
-      const { error: loginError } = await supabase.auth.signInWithPassword({
+      const { data, error: loginError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
@@ -130,6 +89,11 @@ export const useAuthStore = defineStore('auth', () => {
       if (loginError) {
         error.value = loginError.message
         throw loginError
+      }
+
+      if (data?.user) {
+        user.value = data.user
+        await fetchProfile()
       }
     } finally {
       loading.value = false
@@ -141,7 +105,7 @@ export const useAuthStore = defineStore('auth', () => {
       loading.value = true
       error.value = null
 
-      const { error: registerError } = await supabase.auth.signUp({
+      const { data, error: registerError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -153,13 +117,17 @@ export const useAuthStore = defineStore('auth', () => {
         error.value = registerError.message
         throw registerError
       }
+
+      if (data?.user) {
+        user.value = data.user
+        await fetchProfile()
+      }
     } finally {
       loading.value = false
     }
   }
 
   async function logout() {
-    localStorage.removeItem('sip_desa_mock_session')
     await supabase.auth.signOut()
     user.value = null
     profile.value = null

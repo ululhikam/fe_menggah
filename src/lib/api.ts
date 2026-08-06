@@ -6,8 +6,11 @@ import { supabase } from './supabase'
  * - Development: uses Vite proxy '/api' → 'http://localhost:3001'
  * - Production (Vercel): uses VITE_API_URL env variable (e.g. 'https://api-xxx.vercel.app/api')
  */
+const rawBaseUrl = (import.meta.env.VITE_API_URL as string) || '/api'
+const cleanBaseUrl = rawBaseUrl.replace(/\/+$/, '')
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: cleanBaseUrl,
   timeout: 15_000,
   headers: {
     'Content-Type': 'application/json',
@@ -16,14 +19,9 @@ const api = axios.create({
 
 // Request interceptor: attach auth token
 api.interceptors.request.use(async (config) => {
-  // Check for mock session first
-  const mockSessionStr = localStorage.getItem('sip_desa_mock_session')
-  if (mockSessionStr) {
-    const mockSession = JSON.parse(mockSessionStr)
-    if (mockSession?.user?.id) {
-      config.headers.Authorization = `Bearer ${mockSession.user.id}`
-      return config
-    }
+  if (config.url) {
+    // Sanitize url to avoid double slash e.g. //public -> /public
+    config.url = config.url.replace(/^\/+/, '/')
   }
 
   // Fallback to Supabase session
