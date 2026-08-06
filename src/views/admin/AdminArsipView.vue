@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Archive, Eye, EyeOff, Search, ExternalLink, Trash2, ArchiveRestore } from 'lucide-vue-next'
+import { Archive, Eye, EyeOff, Search, ExternalLink, Trash2 } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 import api from '@/lib/api'
 import { useToast } from '@/composables/useToast'

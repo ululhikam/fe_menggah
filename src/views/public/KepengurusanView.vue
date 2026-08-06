@@ -12,6 +12,7 @@ interface Member {
   email?: string
   period_start?: string
   period_end?: string
+  group_type?: string
 }
 
 interface Group {

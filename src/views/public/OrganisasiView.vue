@@ -28,15 +28,6 @@ const fallbackOrgs: Organization[] = [
 
 const organizations = ref<Organization[]>(fallbackOrgs)
 
-const orgIcons = [
-  { icon: '🏆' },
-  { icon: '👩‍👧‍👦' },
-  { icon: '❤️‍🩺' },
-  { icon: '📖' },
-  { icon: '🌾' },
-  { icon: '👥' },
-]
-
 onMounted(async () => {
   checkMobile()
   window.addEventListener('resize', checkMobile)
@@ -163,12 +154,12 @@ const getCardStyle = (index: number) => {
                   :alt="org.name" 
                   class="w-full h-full object-cover"
                 />
-                <div
+                <img
                   v-else
-                  class="w-full h-full bg-gradient-to-br from-emerald-500/10 to-emerald-700/15 flex items-center justify-center text-3xl"
-                >
-                  <span>{{ orgIcons[idx % orgIcons.length]?.icon }}</span>
-                </div>
+                  src="/images/hero.jpg"
+                  :alt="org.name"
+                  class="w-full h-full object-cover filter brightness-[0.95]"
+                />
               </div>
 
               <!-- Name & Members badge header -->

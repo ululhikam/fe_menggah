@@ -2,9 +2,12 @@
 import { ref, onMounted } from 'vue'
 import { Plus, Edit2, Trash2, Building2 } from 'lucide-vue-next'
 import api from '@/lib/api'
+import { useToast } from '@/composables/useToast'
+import ImageUpload from '@/components/ui/ImageUpload.vue'
 
-interface Org { id: string; name: string; slug: string; description?: string; order_index?: number; created_at: string }
+interface Org { id: string; name: string; slug: string; description?: string; logo_url?: string; order_index?: number; created_at: string }
 
+const toast = useToast()
 const loading = ref(true)
 const items = ref<Org[]>([])
 const showModal = ref(false)
@@ -12,7 +15,7 @@ const editingItem = ref<Org | null>(null)
 const saving = ref(false)
 const deleting = ref<string | null>(null)
 
-const form = ref({ name: '', slug: '', description: '', order_index: 0 })
+const form = ref({ name: '', slug: '', description: '', logo_url: '', order_index: 0 })
 
 onMounted(() => load())
 
@@ -27,13 +30,13 @@ async function load() {
 
 function openCreate() {
   editingItem.value = null
-  form.value = { name: '', slug: '', description: '', order_index: items.value.length }
+  form.value = { name: '', slug: '', description: '', logo_url: '', order_index: items.value.length }
   showModal.value = true
 }
 
 function openEdit(item: Org) {
   editingItem.value = item
-  form.value = { name: item.name, slug: item.slug, description: item.description || '', order_index: item.order_index || 0 }
+  form.value = { name: item.name, slug: item.slug, description: item.description || '', logo_url: item.logo_url || '', order_index: item.order_index || 0 }
   showModal.value = true
 }
 
@@ -87,8 +90,9 @@ async function deleteItem(id: string) {
         class="card group"
       >
         <div class="flex items-start justify-between mb-3">
-          <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
-            <Building2 :size="18" class="text-green-600" />
+          <div class="w-10 h-10 rounded-xl overflow-hidden bg-green-50 flex items-center justify-center border border-surface-200">
+            <img v-if="item.logo_url" :src="item.logo_url" :alt="item.name" class="w-full h-full object-cover" />
+            <Building2 v-else :size="18" class="text-green-600" />
           </div>
           <div class="flex gap-1.5">
             <button @click="openEdit(item)" class="p-1.5 rounded-lg text-surface-400 hover:text-green-600 hover:bg-green-50 transition-colors"><Edit2 :size="14" /></button>
@@ -122,7 +126,16 @@ async function deleteItem(id: string) {
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Deskripsi</label>
-              <textarea v-model="form.description" rows="4" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm resize-none focus:outline-none focus:border-green-500"></textarea>
+              <textarea v-model="form.description" rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm resize-none focus:outline-none focus:border-green-500"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Logo Organisasi</label>
+              <ImageUpload
+                v-model="form.logo_url"
+                bucket="media"
+                folder="organisasi"
+                @error="toast.error($event)"
+              />
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Urutan Tampil</label>

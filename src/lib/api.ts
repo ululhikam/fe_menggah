@@ -3,10 +3,11 @@ import { supabase } from './supabase'
 
 /**
  * Pre-configured Axios instance for API calls.
- * Automatically attaches Supabase JWT token to requests.
+ * - Development: uses Vite proxy '/api' → 'http://localhost:3001'
+ * - Production (Vercel): uses VITE_API_URL env variable (e.g. 'https://api-xxx.vercel.app/api')
  */
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   timeout: 15_000,
   headers: {
     'Content-Type': 'application/json',

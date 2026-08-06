@@ -11,7 +11,6 @@ import {
   Building2,
   Users,
   UserCog,
-  FileText,
   FolderOpen,
   Settings,
   X,
@@ -40,10 +39,9 @@ const menuItems = [
   { to: '/admin/pengumuman', label: 'Pengumuman', icon: Megaphone },
   { to: '/admin/organisasi', label: 'Organisasi', icon: Building2 },
   { to: '/admin/kepengurusan', label: 'Kepengurusan', icon: Users },
-  { to: '/admin/profil', label: 'Profil Dusun', icon: FileText },
   { to: '/admin/media', label: 'Media Manager', icon: FolderOpen },
   { to: '/admin/settings', label: 'Pengaturan', icon: Settings },
-  { to: '/admin/pengguna', label: 'Pengguna & Role', icon: UserCog, superAdminOnly: true },
+  { to: '/admin/pengguna', label: 'Pengguna', icon: UserCog },
 ]
 
 function isActive(path: string, exact?: boolean) {
@@ -96,7 +94,6 @@ async function handleLogout() {
     <nav class="flex-1 p-3 space-y-0.5 overflow-y-auto scrollbar-hide">
       <template v-for="item in menuItems" :key="item.to">
         <RouterLink
-          v-if="!item.superAdminOnly || authStore.isSuperAdmin"
           :to="item.to"
           class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
           :class="isActive(item.to, item.exact)

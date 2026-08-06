@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute, RouterLink } from 'vue-router'
-import { Calendar, ArrowLeft, Clock, User, Plus, Leaf } from 'lucide-vue-next'
+import { Calendar, ArrowLeft, User, Plus, Leaf } from 'lucide-vue-next'
 import api from '@/lib/api'
 
 const route = useRoute()

@@ -26,7 +26,7 @@ const users     = ref<AdminUser[]>([])
 // Invite modal
 const showInviteModal = ref(false)
 const inviteEmail     = ref('')
-const inviteRole      = ref<'admin' | 'super_admin'>('admin')
+const inviteRole      = ref<'super_admin'>('super_admin')
 const inviting        = ref(false)
 
 // Edit role modal
@@ -40,12 +40,9 @@ const deleting     = ref(false)
 
 const roleColors: Record<string, string> = {
   super_admin: 'badge-warm',
-  admin: 'badge-primary',
 }
 const roleLabels: Record<string, string> = {
   super_admin: 'Super Admin',
-  admin: 'Admin',
-  warga: 'Warga',
 }
 
 // ─── Methods ──────────────────────────────────────────────────────────────────
@@ -58,7 +55,7 @@ async function loadUsers() {
     const { data, error } = await supabase
       .from('profiles')
       .select('id, full_name, role, phone, created_at')
-      .in('role', ['admin', 'super_admin'])
+      .in('role', ['super_admin'])
       .order('created_at', { ascending: false })
 
     if (error) throw error
@@ -83,8 +80,7 @@ async function loadUsers() {
   } catch (err: any) {
     // Jika gagal (misal: mock session), gunakan data mock
     users.value = [
-      { id: 'mock-super-admin-id', email: 'superadmin@katekan.desa.id', full_name: 'Supardi (Super Admin KKN)', role: 'super_admin', created_at: new Date().toISOString() },
-      { id: 'mock-admin-id', email: 'admin@katekan.desa.id', full_name: 'Sarwono, S.Sos', role: 'admin', created_at: new Date().toISOString() },
+      { id: 'mock-super-admin-id', email: 'superadmin@katekan.desa.id', full_name: 'Super Admin Dusun Menggah', role: 'super_admin', created_at: new Date().toISOString() },
     ]
     console.warn('[UsersView] Menggunakan data mock:', err?.message)
   } finally {
@@ -151,7 +147,7 @@ async function confirmDelete() {
   try {
     const { error } = await supabase
       .from('profiles')
-      .update({ role: 'warga' })
+      .update({ role: null })
       .eq('id', deleteTarget.value.id)
     if (error) throw error
     toast.success('Akses admin berhasil dicabut.')
@@ -306,8 +302,7 @@ onMounted(() => loadUsers())
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Role</label>
-                <select v-model="inviteRole" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500">
-                  <option value="admin">Admin</option>
+                <select v-model="inviteRole" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500" disabled>
                   <option value="super_admin">Super Admin</option>
                 </select>
               </div>
@@ -331,8 +326,7 @@ onMounted(() => loadUsers())
             <h2 class="text-base font-black text-slate-900">Ubah Role — {{ editTarget.full_name }}</h2>
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Role Baru</label>
-              <select v-model="editRole" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500">
-                <option value="admin">Admin</option>
+              <select v-model="editRole" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500" disabled>
                 <option value="super_admin">Super Admin</option>
               </select>
             </div>
@@ -351,7 +345,7 @@ onMounted(() => loadUsers())
     <ConfirmModal
       :open="!!deleteTarget"
       title="Cabut Akses Admin"
-      :description="`Role '${deleteTarget?.full_name}' akan diubah menjadi Warga biasa. Mereka tidak bisa lagi mengakses panel admin.`"
+      :description="`Akun '${deleteTarget?.full_name}' akan dihapus aksesnya dari panel admin.`"
       confirm-label="Ya, Cabut Akses"
       variant="warning"
       :loading="deleting"

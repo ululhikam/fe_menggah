@@ -60,7 +60,7 @@ router.beforeEach(async (to) => {
   // Check role requirements
   if (to.meta.requiredRole) {
     const roles = to.meta.requiredRole as string[]
-    if (!roles.includes(authStore.userRole)) {
+    if (!roles.includes(authStore.userRole ?? '')) {
       return '/'
     }
   }

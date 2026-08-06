@@ -44,7 +44,7 @@ const authStore = useAuthStore()
         </div>
         <div class="hidden sm:block">
           <p class="text-sm font-semibold text-surface-800">{{ authStore.displayName }}</p>
-          <p class="text-xs text-surface-500 capitalize">{{ authStore.userRole.replace('_', ' ') }}</p>
+          <p class="text-xs text-surface-500 capitalize">{{ authStore.userRole?.replace('_', ' ') ?? 'Super Admin' }}</p>
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ export const adminRoutes: RouteRecordRaw[] = [
   {
     path: '/admin',
     component: AdminLayout,
-    meta: { requiresAuth: true, requiredRole: ['admin', 'super_admin'] },
+    meta: { requiresAuth: true, requiredRole: ['super_admin'] },
     children: [
       {
         path: '',
@@ -56,12 +56,6 @@ export const adminRoutes: RouteRecordRaw[] = [
         meta: { title: 'Manajemen Kepengurusan — Admin Dusun Menggah' },
       },
       {
-        path: 'profil',
-        name: 'AdminProfil',
-        component: () => import('@/views/admin/AdminProfilView.vue'),
-        meta: { title: 'Profil Dusun — Admin Dusun Menggah' },
-      },
-      {
         path: 'media',
         name: 'AdminMedia',
         component: () => import('@/views/admin/AdminMediaView.vue'),
@@ -77,10 +71,7 @@ export const adminRoutes: RouteRecordRaw[] = [
         path: 'pengguna',
         name: 'AdminUsers',
         component: () => import('@/views/admin/UsersView.vue'),
-        meta: {
-          title: 'Manajemen Pengguna — Admin Dusun Menggah',
-          requiredRole: ['super_admin'],
-        },
+        meta: { title: 'Manajemen Pengguna — Admin Dusun Menggah' },
       },
     ],
   },

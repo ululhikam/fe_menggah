@@ -4,8 +4,6 @@
 
 export enum UserRole {
   SUPER_ADMIN = 'super_admin',
-  ADMIN = 'admin',
-  WARGA = 'warga',
 }
 
 export enum LetterType {

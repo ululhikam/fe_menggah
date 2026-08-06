@@ -2,18 +2,18 @@
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
-import { Mail, Lock, User, CreditCard, LogIn, ShieldAlert } from 'lucide-vue-next'
+import { Mail, Lock, User, CreditCard, LogIn } from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const form = ref({ email: '', password: '', full_name: '', nik: '', role: 'warga' })
+const form = ref({ email: '', password: '', full_name: '', nik: '' })
 
 async function handleRegister() {
   try {
     await authStore.register(form.value.email, form.value.password, {
       full_name: form.value.full_name,
       nik: form.value.nik,
-      role: form.value.role,
+      role: 'super_admin',
     })
     router.push('/')
   } catch { /* Error handled by store */ }
@@ -80,23 +80,7 @@ async function handleRegister() {
           </div>
         </div>
 
-        <div>
-          <label for="reg-role" class="block text-[10px] uppercase tracking-wider font-bold text-primary-200 mb-2">Role Akses (Peran)</label>
-          <div class="relative">
-            <ShieldAlert :size="16" class="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" />
-            <select 
-              id="reg-role" 
-              v-model="form.role"
-              class="w-full rounded-full bg-white/5 border border-white/10 text-white pl-11 pr-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-400 transition-all duration-300 appearance-none"
-            >
-              <option value="warga" class="bg-[#0f172a] text-white">Warga (Masyarakat)</option>
-              <option value="admin" class="bg-[#0f172a] text-white">Admin (Perangkat Desa)</option>
-              <option value="super_admin" class="bg-[#0f172a] text-white">Super Admin (Kades)</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
+<div>
           <label for="reg-email" class="block text-[10px] uppercase tracking-wider font-bold text-primary-200 mb-2">Email</label>
           <div class="relative">
             <Mail :size="16" class="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" />

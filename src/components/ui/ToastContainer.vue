@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { CheckCircle2, XCircle, AlertTriangle, Info, X } from 'lucide-vue-next'
 import { useToast } from '@/composables/useToast'
 

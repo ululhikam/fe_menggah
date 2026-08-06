@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Plus, Edit2, Trash2, Calendar, X } from 'lucide-vue-next'
+import { Plus, Edit2, Trash2, Calendar } from 'lucide-vue-next'
 import api from '@/lib/api'
 import { useToast } from '@/composables/useToast'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'

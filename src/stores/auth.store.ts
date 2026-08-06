@@ -11,14 +11,14 @@ const mockUsers: Record<string, { user: any, profile: Profile }> = {
     profile: {
       id: 'mock-super-admin-id',
       nik: '3310000000000001',
-      full_name: 'Supardi (Super Admin KKN)',
+      full_name: 'Super Admin Dusun Menggah',
       birth_place: 'Klaten',
       birth_date: '1990-01-01',
       gender: 'laki-laki' as any,
       religion: 'islam' as any,
       marital_status: 'kawin' as any,
       education: 'S1',
-      occupation: 'PNS',
+      occupation: 'Kepala Dusun',
       address: 'Dusun Menggah RT 01 / RW 01, Katekan, Gantiwarno',
       family_card_id: 'mock-kk-1',
       role: UserRole.SUPER_ADMIN,
@@ -28,50 +28,6 @@ const mockUsers: Record<string, { user: any, profile: Profile }> = {
       updated_at: new Date().toISOString(),
     }
   },
-  'admin@katekan.desa.id': {
-    user: { id: 'mock-admin-id', email: 'admin@katekan.desa.id' },
-    profile: {
-      id: 'mock-admin-id',
-      nik: '3310000000000002',
-      full_name: 'Sarwono, S.Sos (Kepala Desa)',
-      birth_place: 'Klaten',
-      birth_date: '1985-05-12',
-      gender: 'laki-laki' as any,
-      religion: 'islam' as any,
-      marital_status: 'kawin' as any,
-      education: 'S1',
-      occupation: 'Kepala Desa',
-      address: 'Dusun Menggah RT 02 / RW 01, Katekan, Gantiwarno',
-      family_card_id: 'mock-kk-1',
-      role: UserRole.ADMIN,
-      phone: '081234567891',
-      photo_url: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
-  },
-  'warga@katekan.desa.id': {
-    user: { id: 'mock-warga-id', email: 'warga@katekan.desa.id' },
-    profile: {
-      id: 'mock-warga-id',
-      nik: '3310000000000003',
-      full_name: 'Budi Santoso',
-      birth_place: 'Klaten',
-      birth_date: '1995-08-21',
-      gender: 'laki-laki' as any,
-      religion: 'islam' as any,
-      marital_status: 'belum_kawin' as any,
-      education: 'SMA',
-      occupation: 'Buruh',
-      address: 'Dusun Menggah RT 03 / RW 01, Katekan, Gantiwarno',
-      family_card_id: 'mock-kk-2',
-      role: UserRole.WARGA,
-      phone: '081234567892',
-      photo_url: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
-  }
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -84,10 +40,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Getters
   const isAuthenticated = computed(() => !!user.value)
-  const userRole = computed(() => profile.value?.role || UserRole.WARGA)
-  const isAdmin = computed(() =>
-    [UserRole.ADMIN, UserRole.SUPER_ADMIN].includes(userRole.value)
-  )
+  const userRole = computed(() => profile.value?.role || null)
+  const isAdmin = computed(() => userRole.value === UserRole.SUPER_ADMIN)
   const isSuperAdmin = computed(() => userRole.value === UserRole.SUPER_ADMIN)
   const displayName = computed(() => profile.value?.full_name || user.value?.email || 'Pengguna')
 
