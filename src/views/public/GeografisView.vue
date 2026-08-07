@@ -29,8 +29,8 @@ import { Compass, MapPin, Plus, Sparkles, Map, ExternalLink } from 'lucide-vue-n
         <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#1B432C] mb-3">
           Letak Geografis Dusun
         </h1>
-        <p class="text-slate-600 text-xs sm:text-sm font-semibold leading-relaxed">
-          Terletak di dataran rendah yang subur, Dusun Menggah menawarkan perpaduan bentang alam persawahan hijau dan permukiman rapi yang mendukung kehidupan agraris yang harmonis.
+        <p class="text-slate-600 text-xs sm:text-sm font-semibold leading-relaxed text-justify">
+          Secara geografis, Dusun Menggah RT 01 RW 02 menempati kawasan yang sangat strategis di wilayah Desa Katekan, Kecamatan Gantiwarno, Kabupaten Klaten, Provinsi Jawa Tengah. Wilayah ini bertindak sebagai titik perbatasan langsung yang menghubungkan Kabupaten Klaten dengan wilayah Kabupaten Gunungkidul. Topografi dusun ini didominasi oleh bentang lahan agraris yang subur dan area persawahan hijau, memberikan nuansa pedesaan yang asri sekaligus mendukung sektor pertanian sebagai urat nadi kehidupan warganya. Letaknya yang berada di jalur perbatasan menjadikan arus mobilitas masyarakat dan pertukaran ekonomi lokal berjalan dengan cukup dinamis.
         </p>
       </div>
     </section>
@@ -48,7 +48,7 @@ import { Compass, MapPin, Plus, Sparkles, Map, ExternalLink } from 'lucide-vue-n
                   <Map :size="16" class="text-[#1B432C]" /> Peta Lokasi
                 </h3>
                 <a 
-                  href="https://maps.google.com" 
+                  href="https://maps.app.goo.gl/x77tpvXD9zAmAUHZ8" 
                   target="_blank" 
                   class="text-slate-400 hover:text-slate-800 transition-colors"
                   title="Buka Google Maps"

@@ -23,8 +23,8 @@ import { Building2, Heart, GraduationCap, Compass, Plus } from 'lucide-vue-next'
             Fasilitas Penunjang <br />
             <span class="text-[#805030] font-serif italic font-semibold">Kesejahteraan Warga</span>
           </h1>
-          <p class="text-slate-500 text-xs sm:text-sm font-semibold leading-relaxed">
-            Infrastruktur modern yang dibangun berdampingan dengan alam. Kami menyediakan berbagai fasilitas memadai untuk mendukung kegiatan sosial, ibadah, olahraga, pendidikan, dan kesehatan bagi seluruh warga Dusun Menggah.
+          <p class="text-slate-500 text-xs sm:text-sm font-semibold leading-relaxed text-justify">
+            Guna mendukung seluruh aktivitas warga, Dusun Menggah dilengkapi dengan berbagai fasilitas umum yang sangat memadai. Jantung interaksi sosial dan transaksi ekonomi warga berpusat di Pasar Tradisional Menggah yang menyediakan kebutuhan pokok sehari-hari. Selain itu, masyarakat juga sangat terbantu dengan hadirnya Taman Kuliner Griya Sari Buana di kawasan desa, yang menawarkan fasilitas lengkap mulai dari pendopo, musala, kolam renang anak, gazebo, ruang pertemuan, hingga deretan lapak kuliner produk unggulan. Fasilitas infrastruktur jalan desa yang sudah terbangun dengan baik, sistem irigasi untuk persawahan, serta area berkumpul warga menjadikan dusun ini sebagai tempat yang nyaman, mandiri, dan berfasilitas lengkap untuk menunjang kehidupan sehari-hari.
           </p>
         </div>
 

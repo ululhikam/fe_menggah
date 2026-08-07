@@ -13,6 +13,7 @@ interface Member {
   period_start?: string
   period_end?: string
   group_type?: string
+  organizations?: { name: string; slug: string }
 }
 
 interface Group {
@@ -32,10 +33,10 @@ async function fetchMembers() {
   loading.value = true
   try {
     const res = await api.get('/public/members?per_page=100')
-    if (res.data?.success && res.data?.data?.items) {
-      const allMembers: Member[] = res.data.data.items
+    if (res.data?.success && res.data?.data) {
+      const allMembers: Member[] = Array.isArray(res.data.data) ? res.data.data : (res.data.data.items || [])
       const grouped = allMembers.reduce((acc, member) => {
-        const groupType = member.group_type || 'Lainnya'
+        const groupType = member.organizations?.name || member.group_type || 'Lainnya'
         if (!acc[groupType]) {
           acc[groupType] = []
         }

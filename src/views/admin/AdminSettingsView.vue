@@ -13,7 +13,7 @@ const generalSettings = ref({
   village_address: 'Dusun Menggah, Desa Katekan, Kecamatan Ngawi, Kabupaten Ngawi, Jawa Timur 63261',
   village_phone: '+62 812-3456-7890',
   village_email: 'dusunmenggah@gmail.com',
-  google_maps_url: 'https://maps.google.com/?q=Dusun+Menggah+Katekan+Ngawi',
+  google_maps_url: 'https://maps.app.goo.gl/x77tpvXD9zAmAUHZ8',
 })
 
 const socialSettings = ref({

@@ -91,7 +91,9 @@ function isDropdownActive(subLinks: { to: string }[]) {
         />
         <div class="hidden sm:block leading-tight">
           <span class="block font-black text-sm text-slate-900 tracking-tight">Dusun Menggah</span>
-          <span class="block text-[10px] text-slate-500 font-medium">Desa Katekan, Ngawi</span>
+          <span class="block text-[10px] text-slate-500 font-medium">Desa Katekan, Gantiwarno, Klaten,
+            Jawa Tengah
+          </span>
         </div>
       </RouterLink>
 

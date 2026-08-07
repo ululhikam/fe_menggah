@@ -233,13 +233,19 @@ onMounted(() => {
         <!-- Right: Description -->
         <div class="lg:col-span-9 space-y-8">
           <h2 class="text-2xl sm:text-4xl lg:text-[2.75rem] leading-[1.15] font-light text-slate-900 tracking-tight">
-            Meskipun ada kemajuan teknologi modern, pertanian Dusun Menggah tetap berakar pada <span class="font-serif italic font-medium text-emerald-850">kearifan lokal</span> dan semangat <span class="font-serif italic font-medium text-emerald-850">gotong royong</span>.
+            Lingkungan yang sangat erat kaitannya dengan <span class="font-serif italic font-medium text-emerald-850">sektor agraris</span> dan semangat <span class="font-serif italic font-medium text-emerald-850">gotong royong</span> warganya.
           </h2>
           
           <div class="grid md:grid-cols-12 gap-6 pt-4">
-            <div class="md:col-span-8 space-y-4">
-              <p class="text-slate-500 text-sm leading-relaxed text-justify font-medium">
-                Dusun Menggah merupakan salah satu wilayah administratif Desa Katekan, Ngawi yang subur. Kami mengintegrasikan tradisi bertani turun-temurun dengan inovasi terkini. Mahasiswa KKN bersama warga aktif mendorong implementasi pertanian berbasis lingkungan untuk menjaga kelestarian tanah serta meningkatkan nilai ekonomi komoditas lokal.
+            <div class="md:col-span-8 space-y-4 text-justify">
+              <p class="text-slate-500 text-sm leading-relaxed font-medium">
+                Dusun Menggah RT 01 RW 02 merupakan salah satu wilayah yang terletak di Desa Katekan, Kecamatan Gantiwarno, Kabupaten Klaten, Provinsi Jawa Tengah. Wilayah Desa Katekan sendiri memiliki posisi yang cukup strategis karena menjadi daerah perbatasan langsung antara Kabupaten Klaten dan Kabupaten Gunungkidul. Lingkungan di Dusun Menggah ini sangat erat kaitannya dengan sektor agraris dan perekonomian tradisional, yang ditopang oleh lahan-lahan pertanian hijau yang membentang di sekitar desa.
+              </p>
+              <p class="text-slate-500 text-sm leading-relaxed font-medium">
+                Pusat denyut nadi perekonomian bagi warga setempat salah satunya digerakkan oleh keberadaan Pasar Tradisional Menggah. Pasar ini menjadi lokasi bertemunya para pedagang dan pembeli dari warga desa untuk memenuhi berbagai kebutuhan pokok sehari-hari yang ketersediaannya terpantau baik dan stabil. Selain mengandalkan pasar tradisional, masyarakat Dusun Menggah kini juga memiliki kemudahan akses ke fasilitas Taman Kuliner Griya Sari Buana di Desa Katekan. Taman kuliner ini merupakan hasil kolaborasi dari Dana Desa serta Bantuan Keuangan Kabupaten Klaten yang dirancang khusus untuk memajukan produk unggulan desa serta memberdayakan Usaha Mikro, Kecil, dan Menengah (UMKM) masyarakat sekitar.
+              </p>
+              <p class="text-slate-500 text-sm leading-relaxed font-medium">
+                Di samping potensi ekonominya, warga di Dusun Menggah RT 01 RW 02 dikenal memiliki semangat gotong royong yang sangat tinggi, baik dalam kehidupan sehari-hari maupun saat menghadapi situasi darurat. Kekompakan ini sangat terlihat ketika terjadi bencana alam, seperti insiden luapan banjir dan jebolnya tanggul avur Sangiran di Dukuh Menggah akibat tumpukan sedimen. Masyarakat setempat bersama dengan berbagai instansi secara sigap dan kompak turun langsung untuk bekerja bakti merapikan infrastruktur, memasang ribuan karung pasir, hingga menata bronjong kawat berisi batu guna menahan air. Kerukunan dan solidaritas warga inilah yang menjadikan Dusun Menggah sebagai lingkungan yang tangguh dan selalu saling mendukung satu sama lain.
               </p>
             </div>
             <div class="md:col-span-4 flex flex-col gap-3 justify-center lg:items-end">
@@ -373,12 +379,12 @@ onMounted(() => {
         <div class="relative z-10 max-w-2xl space-y-6">
           <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-3.5 py-1.5 rounded-full backdrop-blur-md">
             <MapPin :size="12" class="text-white" />
-            <span class="text-[9px] font-bold tracking-widest text-white uppercase">Dusun Menggah, Katekan, Ngawi</span>
+            <span class="text-[9px] font-bold tracking-widest text-white uppercase">Dusun Menggah, Gantiwarno, Klaten</span>
           </div>
           
           <h2 class="text-2xl sm:text-4xl lg:text-5xl font-light leading-tight text-white">
-            Kolaborasi & Belajar Bersama <br class="hidden sm:inline" />
-            Para <span class="font-serif italic font-medium text-green-300">Ahli & Praktisi</span> Pertanian.
+            Pusat Penggerak Ekonomi & <br class="hidden sm:inline" />
+            Semangat <span class="font-serif italic font-medium text-amber-200">Gotong Royong</span> Warga.
           </h2>
 
           <div class="flex items-center gap-4 pt-2">
@@ -389,7 +395,7 @@ onMounted(() => {
               GABUNG
             </RouterLink>
             <span class="text-xs text-slate-200 font-semibold tracking-wide">
-              Hubungi pengurus dusun untuk program kemitraan kelompok tani.
+              Mewujudkan lingkungan yang tangguh melalui kolaborasi UMKM dan kerukunan.
             </span>
           </div>
         </div>
@@ -403,14 +409,14 @@ onMounted(() => {
         <!-- Section Header -->
         <div class="grid md:grid-cols-12 gap-6 items-end">
           <div class="md:col-span-8 space-y-2">
-            <span class="text-[10px] uppercase tracking-widest font-black text-emerald-800 block">Sektor Unggulan & Inovasi</span>
+            <span class="text-[10px] uppercase tracking-widest font-black text-emerald-800 block">Pilar Ekonomi & Sosial</span>
             <h2 class="text-3xl sm:text-5xl font-light tracking-tight text-slate-900 font-sans">
-              Solusi Cerdas Untuk Hasil <span class="font-serif italic font-medium">Tani Optimal</span>
+              Penggerak Kemajuan <span class="font-serif italic font-medium">Dusun Menggah</span>
             </h2>
           </div>
           <div class="md:col-span-4 lg:pl-8">
             <p class="text-slate-400 text-xs leading-relaxed font-semibold">
-              Mendorong implementasi metode pertanian modern untuk meningkatkan efisiensi kerja, produktivitas, serta keberlanjutan alam Dusun Menggah.
+              Memajukan kesejahteraan warga melalui penguatan ekonomi mikro, fasilitas umum yang memadai, serta pelestarian budaya gotong royong yang mengakar kuat.
             </p>
           </div>
         </div>
@@ -418,41 +424,41 @@ onMounted(() => {
         <!-- Three Columns Grid -->
         <div class="grid md:grid-cols-3 gap-8">
           
-          <!-- Card 1: Pertanian Presisi -->
+          <!-- Card 1 -->
           <div class="bg-white rounded-3xl overflow-hidden border border-slate-200/50 shadow-sm hover:shadow-md transition-all duration-300 p-6 space-y-6">
             <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100">
-              <img src="/images/smart_farming_precision.png" alt="Smart precision farming tablet representation" class="w-full h-full object-cover" />
+              <img src="/images/potensi_padi.png" alt="Sektor Agraris" class="w-full h-full object-cover" />
             </div>
             <div class="space-y-3">
-              <h3 class="text-lg font-semibold text-slate-950">Pertanian Presisi</h3>
+              <h3 class="text-lg font-semibold text-slate-950">Sektor Agraris & Perekonomian</h3>
               <p class="text-slate-500 text-xs leading-relaxed font-medium">
-                Penerapan analisis data tanah untuk takaran pupuk organik yang presisi, meningkatkan kualitas bulir padi organik Menggah secara optimal.
+                Ditopang oleh lahan-lahan pertanian hijau yang membentang di sekitar desa sebagai tumpuan ekonomi tradisional masyarakat.
               </p>
             </div>
           </div>
 
-          <!-- Card 2: Pengawasan Drone -->
+          <!-- Card 2 -->
           <div class="bg-white rounded-3xl overflow-hidden border border-slate-200/50 shadow-sm hover:shadow-md transition-all duration-300 p-6 space-y-6">
             <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100">
-              <img src="/images/drone_crop_surveillance.png" alt="Drone surveillance over crop fields" class="w-full h-full object-cover" />
+              <img src="/images/historical_panen_raya.png" alt="Pasar Tradisional" class="w-full h-full object-cover" />
             </div>
             <div class="space-y-3">
-              <h3 class="text-lg font-semibold text-slate-950">Pemantauan Udara</h3>
+              <h3 class="text-lg font-semibold text-slate-950">Pasar Tradisional Menggah</h3>
               <p class="text-slate-500 text-xs leading-relaxed font-medium">
-                Penggunaan teknologi drone/UAV untuk pemetaan kesehatan tanaman padi dan deteksi dini penyebaran hama di seluruh hamparan persawahan.
+                Menjadi pusat denyut nadi perekonomian, tempat bertemunya pedagang dan warga desa untuk memenuhi kebutuhan pokok sehari-hari.
               </p>
             </div>
           </div>
 
-          <!-- Card 3: Irigasi Otomatis -->
+          <!-- Card 3 -->
           <div class="bg-white rounded-3xl overflow-hidden border border-slate-200/50 shadow-sm hover:shadow-md transition-all duration-300 p-6 space-y-6">
             <div class="aspect-video w-full rounded-2xl overflow-hidden bg-slate-100">
-              <img src="/images/automated_watering_robotic.png" alt="Automated greenhouse watering" class="w-full h-full object-cover" />
+              <img src="/images/nature_spot_camp.png" alt="Taman Kuliner" class="w-full h-full object-cover" />
             </div>
             <div class="space-y-3">
-              <h3 class="text-lg font-semibold text-slate-950">Irigasi Otomatis</h3>
+              <h3 class="text-lg font-semibold text-slate-950">Taman Kuliner & UMKM</h3>
               <p class="text-slate-500 text-xs leading-relaxed font-medium">
-                Sistem pengairan pintar berbasis kelembaban tanah untuk pembibitan benih, menghemat konsumsi air tanah dan menjaga kualitas persemaian.
+                Ruang kolaborasi untuk memajukan produk unggulan desa serta memberdayakan Usaha Mikro, Kecil, dan Menengah (UMKM) warga sekitar.
               </p>
             </div>
           </div>
@@ -464,15 +470,15 @@ onMounted(() => {
           <div class="grid md:grid-cols-12 gap-8 items-center">
             <div class="md:col-span-4 lg:col-span-3">
               <div class="aspect-[4/3] md:aspect-square w-full rounded-2xl overflow-hidden bg-slate-100 border border-slate-100">
-                <img src="/images/greenhouse_nursery_eco.png" alt="Nursery sprouts" class="w-full h-full object-cover" />
+                <img src="/images/historical_anyaman.png" alt="Gotong Royong Warga" class="w-full h-full object-cover" />
               </div>
             </div>
             <div class="md:col-span-8 lg:col-span-9 space-y-4">
               <h3 class="text-xl sm:text-2xl lg:text-3xl font-light text-slate-950 leading-snug">
-                Mengubah cara kami mengolah tanah melalui penerapan <span class="font-serif italic font-medium text-emerald-800">praktik berkelanjutan</span> dan <span class="font-serif italic font-medium text-emerald-800">teknologi ramah lingkungan</span> demi masa depan ketahanan pangan desa.
+                Kerukunan dan <span class="font-serif italic font-medium text-emerald-800">solidaritas warga</span> yang tinggi ketika menghadapi situasi darurat menjadikan Dusun Menggah sebagai <span class="font-serif italic font-medium text-emerald-800">lingkungan yang tangguh</span> dan selalu saling mendukung satu sama lain.
               </h3>
               <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">
-                Kelompok Tani Dusun Menggah &bull; Program KKN Mahasiswa 2026
+                Semangat Gotong Royong Tanpa Batas
               </p>
             </div>
           </div>

@@ -18,9 +18,11 @@ import { Plus } from 'lucide-vue-next'
       <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-none text-[#1B432C] font-sans max-w-4xl mx-auto mb-4">
         Kekayaan Alam &amp; Karya Tangan Dusun Kami
       </h1>
-      <p class="text-slate-500 text-xs sm:text-sm font-semibold max-w-2xl mx-auto leading-relaxed">
-        Menelusuri potensi agrikultur yang subur, keindahan pariwisata tersembunyi, dan ketekunan warga dalam menciptakan produk lokal unggulan.
-      </p>
+      <div class="max-w-4xl mx-auto text-slate-500 text-xs sm:text-sm font-semibold leading-relaxed text-justify space-y-4">
+        <p>
+          Potensi utama yang dimiliki oleh Dusun Menggah bertumpu pada perpaduan antara sektor pertanian dan usaha mikro kecil menengah. Hasil bumi dari persawahan warga menjadi komoditas penyokong ketahanan pangan lokal. Di samping itu, potensi ekonomi dusun ini semakin bersinar dengan keberadaan pelaku usaha kuliner dan pedagang yang aktif menggerakkan ekonomi mikro. Keterlibatan warga dalam mengelola dan mengisi berbagai kegiatan niaga lokal membuktikan bahwa dusun ini memiliki sumber daya manusia yang ulet, adaptif, serta mampu melihat peluang pasar untuk meningkatkan taraf hidup keluarga.
+        </p>
+      </div>
     </section>
 
     <!-- ===== CONTENT GRID SECTION (Exact layout match "plek ketiplek") ===== -->

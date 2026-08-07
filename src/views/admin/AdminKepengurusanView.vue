@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import { Plus, Edit2, Trash2, Users } from 'lucide-vue-next'
 import api from '@/lib/api'
+import { useToast } from '@/composables/useToast'
+import ImageUpload from '@/components/ui/ImageUpload.vue'
 
 interface Member {
   id: string
@@ -18,6 +20,7 @@ interface Member {
 
 interface Org { id: string; name: string }
 
+const toast = useToast()
 const loading = ref(true)
 const members = ref<Member[]>([])
 const organizations = ref<Org[]>([])
@@ -190,8 +193,14 @@ const orgFilters = () => {
                 <input v-model="form.phone" type="text" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500" placeholder="08xx..." />
               </div>
               <div>
-                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Foto URL</label>
-                <input v-model="form.photo_url" type="url" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500" placeholder="https://..." />
+                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Foto (opsional)</label>
+                <ImageUpload
+                  v-model="form.photo_url"
+                  bucket="media"
+                  folder="kepengurusan"
+                  placeholder="Upload foto (opsional)"
+                  @error="toast.error($event)"
+                />
               </div>
               <div>
                 <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Masa Jabatan Mulai</label>

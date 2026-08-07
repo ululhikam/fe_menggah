@@ -167,10 +167,10 @@ const galleryItems: GalleryItem[] = [
 
           <div class="space-y-4 text-slate-500 text-xs sm:text-sm leading-relaxed font-semibold text-justify">
             <p>
-              Menurut cerita yang diwariskan turun-temurun dari para sesepuh, Dusun Menggah pertama kali dibuka pada awal abad ke-19 oleh sekelompok pengembara yang mencari lahan sawah subur. Dipimpin oleh sesepuh adat setempat, mereka menemukan sebuah lembah hijau yang dialiri oleh sungai jernih dan memutuskan untuk menetap.
+              Sejarah Dusun Menggah tidak lepas dari perkembangan peradaban agraris masyarakat Jawa pada masa lampau yang mulai menetap dan membuka lahan di sekitar perbatasan Klaten dan Gunungkidul. Secara turun-temurun, pemukiman ini terus berkembang dari kelompok-kelompok tani kecil menjadi sebuah lingkungan rukun tetangga yang padat dan rukun.
             </p>
             <p>
-              Nama "Menggah" sendiri diambil dari kata Jawa kuno yang menggambarkan kontur aliran air yang tenang dan menyejukkan. Harmoni hubungan gotong royong antar manusia dan alam ini menjadi filosofi dasar yang terus kami pegang teguh hingga kini.
+              Keberadaan aliran sungai dan sumber air di sekitar desa pada masa lalu menjadi alasan utama terbentuknya komunitas di kawasan ini. Seiring berjalannya waktu, wilayah ini semakin tertata secara administratif menjadi Dusun Menggah, yang karakternya sangat dibentuk oleh nilai-nilai kebersamaan dan tradisi gotong royong yang diwariskan oleh para pendahulu desa.
             </p>
           </div>
         </div>

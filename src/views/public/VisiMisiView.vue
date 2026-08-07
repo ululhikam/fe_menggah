@@ -50,7 +50,7 @@ import { Compass, Building2, Leaf, Users, GraduationCap, ArrowRight, Plus } from
             
             <span class="block text-[10px] text-slate-400 font-extrabold uppercase tracking-widest mb-1">Visi Dusun Menggah</span>
             <h3 class="text-slate-950 font-bold text-xl sm:text-2xl tracking-tight leading-snug mb-4">
-              "Terwujudnya Dusun Menggah yang Mandiri, Berbudaya, dan Sejahtera melalui Tata Kelola yang Transparan dan Partisipatif."
+              "Mewujudkan lingkungan yang religius, aman, sejahtera, dan berdikari melalui semangat gotong royong."
             </h3>
           </div>
         </div>
@@ -60,13 +60,9 @@ import { Compass, Building2, Leaf, Users, GraduationCap, ArrowRight, Plus } from
           <div class="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden shadow-xl border border-slate-200/50 bg-slate-100">
             <img 
               src="/images/historical_anyaman.png" 
-              alt="Menjaga Tradisi Dusun Menggah"
+              alt="Menjaga Tradisi Dusun Menggah" 
               class="w-full h-full object-cover"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/40 to-transparent"></div>
-            <span class="absolute bottom-4 left-5 text-white text-[10px] font-black uppercase tracking-wider bg-black/25 backdrop-blur-sm px-3 py-1 rounded-full">
-              © Menjaga Tradisi
-            </span>
           </div>
         </div>
 
@@ -82,7 +78,7 @@ import { Compass, Building2, Leaf, Users, GraduationCap, ArrowRight, Plus } from
           Langkah Menuju Tujuan
         </h2>
         <p class="text-slate-500 text-xs sm:text-sm font-semibold max-w-xl mx-auto leading-relaxed mt-2">
-          Empat pilar utama misi kami untuk mewujudkan Dusun Menggah yang lebih baik untuk generasi mendatang.
+          Penjabaran misi lingkungan yang menjadi komitmen seluruh elemen masyarakat Dusun Menggah.
         </p>
       </div>
 
@@ -92,12 +88,12 @@ import { Compass, Building2, Leaf, Users, GraduationCap, ArrowRight, Plus } from
         <!-- Card 1 -->
         <div class="bg-white border border-slate-200/50 rounded-[1.8rem] p-6 shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-start gap-4">
           <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 border border-slate-200/50">
-            <Building2 :size="18" />
+            <Users :size="18" />
           </div>
           <div>
-            <h4 class="text-slate-950 font-extrabold text-sm sm:text-base leading-snug mb-2">Tata Kelola Transparan</h4>
+            <h4 class="text-slate-950 font-extrabold text-sm sm:text-base leading-snug mb-2">Peningkatan Kerukunan</h4>
             <p class="text-slate-500 text-xs sm:text-sm leading-relaxed font-semibold">
-              Mewujudkan sistem pemerintahan dusun yang bersih, akuntabel, dan mengutamakan pelayanan publik yang prima berbasis musyawarah.
+              Meningkatkan kerukunan antarwarga melalui berbagai kegiatan sosial kemasyarakatan yang aktif dan inklusif.
             </p>
           </div>
         </div>
@@ -105,12 +101,12 @@ import { Compass, Building2, Leaf, Users, GraduationCap, ArrowRight, Plus } from
         <!-- Card 2 -->
         <div class="bg-white border border-slate-200/50 rounded-[1.8rem] p-6 shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-start gap-4">
           <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 border border-slate-200/50">
-            <Leaf :size="18" />
+            <Building2 :size="18" />
           </div>
           <div>
-            <h4 class="text-slate-955 font-extrabold text-sm sm:text-base leading-snug mb-2">Ekonomi &amp; Lingkungan Berkelanjutan</h4>
+            <h4 class="text-slate-955 font-extrabold text-sm sm:text-base leading-snug mb-2">Pemberdayaan Ekonomi</h4>
             <p class="text-slate-500 text-xs sm:text-sm leading-relaxed font-semibold">
-              Meningkatkan perekonomian warga melalui optimalisasi potensi pertanian lokal dan UMKM sambil menjaga kelestarian alam sekitar.
+              Mengoptimalkan pemberdayaan ekonomi keluarga yang berbasis pada potensi lokal desa dan UMKM.
             </p>
           </div>
         </div>
@@ -118,12 +114,12 @@ import { Compass, Building2, Leaf, Users, GraduationCap, ArrowRight, Plus } from
         <!-- Card 3 -->
         <div class="bg-white border border-slate-200/50 rounded-[1.8rem] p-6 shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-start gap-4">
           <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 border border-slate-200/50">
-            <Users :size="18" />
+            <Leaf :size="18" />
           </div>
           <div>
-            <h4 class="text-slate-950 font-extrabold text-sm sm:text-base leading-snug mb-2">Penguatan Sosial Budaya</h4>
+            <h4 class="text-slate-950 font-extrabold text-sm sm:text-base leading-snug mb-2">Pemeliharaan Infrastruktur & Lingkungan</h4>
             <p class="text-slate-500 text-xs sm:text-sm leading-relaxed font-semibold">
-              Melestarikan nilai-nilai gotong royong, kesenian tradisional, dan kerukunan antar warga sebagai identitas utama dusun.
+              Melakukan pemeliharaan infrastruktur serta menjaga kelestarian lingkungan secara swadaya dan gotong royong.
             </p>
           </div>
         </div>
@@ -134,9 +130,9 @@ import { Compass, Building2, Leaf, Users, GraduationCap, ArrowRight, Plus } from
             <GraduationCap :size="18" />
           </div>
           <div>
-            <h4 class="text-slate-950 font-extrabold text-sm sm:text-base leading-snug mb-2">Peningkatan Kualitas SDM</h4>
+            <h4 class="text-slate-950 font-extrabold text-sm sm:text-base leading-snug mb-2">Keamanan & Generasi Muda</h4>
             <p class="text-slate-500 text-xs sm:text-sm leading-relaxed font-semibold">
-              Mendorong akses pendidikan dan kesehatan yang merata serta memfasilitasi pelatihan keterampilan untuk pemuda dan wanita tani.
+              Terus menjaga keamanan lingkungan sekaligus menciptakan generasi muda yang produktif dan berakhlak mulia.
             </p>
           </div>
         </div>

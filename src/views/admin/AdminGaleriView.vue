@@ -54,7 +54,7 @@ async function loadGallery() {
   loading.value = true
   try {
     const res = await api.get('/cms/gallery?per_page=100')
-    if (res.data?.success) items.value = res.data.data?.data || res.data.data || []
+    if (res.data?.success) items.value = res.data.data?.items || res.data.data || []
   } catch {
     items.value = []
     toast.error('Gagal memuat data galeri.')

@@ -23,40 +23,37 @@ const loading = ref(true)
 async function fetchKontakData() {
   loading.value = true
   try {
-    const [settingsRes, socialRes] = await Promise.all([
-      api.get('/public/settings'),
-      api.get('/public/social-links')
-    ])
+    const settingsRes = await api.get('/public/settings')
 
     if (settingsRes.data?.success && settingsRes.data?.data) {
       const s = settingsRes.data.data
       
-      const addrLines = (s.address || '-').split(', ')
+      const addrLines = (s.village_address || '-').split(', ')
       const addrHtml = addrLines.join('<br>')
 
       contactInfo.value = [
-        { id: 'address', icon: MapPin, title: 'Alamat Kantor Desa', value: s.address || '-', valueHtml: addrHtml, href: `https://maps.google.com/?q=${encodeURIComponent(s.address||'')}` },
-        { id: 'phone', icon: Phone, title: 'Telepon / WhatsApp', value: s.contact_phone || '-', valueHtml: s.contact_phone || '-', href: `https://wa.me/${(s.contact_phone||'').replace(/\D/g,'')}` },
-        { id: 'email', icon: Mail, title: 'Email Resmi', value: s.contact_email || '-', valueHtml: s.contact_email || '-', href: `mailto:${s.contact_email||''}` },
+        { id: 'address', icon: MapPin, title: 'Alamat Kantor Desa', value: s.village_address || '-', valueHtml: addrHtml, href: s.google_maps_url || 'https://maps.app.goo.gl/x77tpvXD9zAmAUHZ8' },
+        { id: 'phone', icon: Phone, title: 'Telepon / WhatsApp', value: s.village_phone || '-', valueHtml: s.village_phone || '-', href: `https://wa.me/${(s.village_phone||'').replace(/\D/g,'')}` },
+        { id: 'email', icon: Mail, title: 'Email Resmi', value: s.village_email || '-', valueHtml: s.village_email || '-', href: `mailto:${s.village_email||''}` },
         { id: 'hours', icon: Clock, title: 'Jam Operasional', value: '', valueHtml: 'Senin - Jumat: 08:00 - 15:00<br>Sabtu - Minggu: Tutup', href: '' },
       ]
-    }
 
-    if (socialRes.data?.success && Array.isArray(socialRes.data?.data)) {
       const iconMap: any = {
         'instagram': Instagram,
         'facebook': Facebook,
         'youtube': Youtube,
+        'tiktok': Globe, // Or a custom TikTok icon
         'website': Globe,
       }
-      socialLinks.value = socialRes.data.data.filter((item: any) => item.is_active).map((item: any) => {
-        const platformKey = item.platform.toLowerCase()
-        return {
-          icon: iconMap[platformKey] || MessageCircle,
-          label: item.platform,
-          href: item.url
-        }
-      })
+      
+      const platforms = ['instagram', 'facebook', 'youtube', 'tiktok']
+      socialLinks.value = platforms
+        .filter(p => s[p]) // Only include if setting has a value
+        .map(p => ({
+          icon: iconMap[p] || MessageCircle,
+          label: p.charAt(0).toUpperCase() + p.slice(1),
+          href: s[p]
+        }))
     }
   } catch (error) {
     console.error('Failed to fetch kontak data', error)

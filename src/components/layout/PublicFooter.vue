@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
-import { MapPin, Phone, Mail, Instagram, Youtube, Facebook, Sparkles } from 'lucide-vue-next'
+import { MapPin, Phone, Mail, Instagram, Youtube, Facebook, Globe } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth.store'
+import api from '@/lib/api'
 
 const authStore = useAuthStore()
 const currentYear = new Date().getFullYear()
@@ -22,11 +24,43 @@ const moreLinks = [
   { to: '/kontak', label: 'Kontak' },
 ]
 
-const socialLinks = [
+const address = ref('Dusun Menggah, Desa Katekan, Kec. Ngawi, Kab. Ngawi, Jawa Timur 63261')
+const phone = ref('+62 812-3456-7890')
+const email = ref('dusunmenggah@gmail.com')
+
+const socialLinks = ref<{ icon: any, href: string, label: string }[]>([
   { icon: Instagram, href: 'https://instagram.com/dusunmenggah', label: 'Instagram' },
   { icon: Facebook, href: 'https://facebook.com/dusunmenggah', label: 'Facebook' },
   { icon: Youtube, href: 'https://youtube.com/@dusunmenggah', label: 'YouTube' },
-]
+])
+
+onMounted(async () => {
+  try {
+    const res = await api.get('/public/settings')
+    if (res.data?.success && res.data?.data) {
+      const s = res.data.data
+      if (s.village_address) address.value = s.village_address
+      if (s.village_phone) phone.value = s.village_phone
+      if (s.village_email) email.value = s.village_email
+      
+      const iconMap: any = {
+        'instagram': Instagram,
+        'facebook': Facebook,
+        'youtube': Youtube,
+        'tiktok': Globe,
+      }
+      const platforms = ['instagram', 'facebook', 'youtube', 'tiktok']
+      const newLinks = platforms.filter(p => s[p]).map(p => ({
+        icon: iconMap[p] || Globe,
+        href: s[p],
+        label: p.charAt(0).toUpperCase() + p.slice(1)
+      }))
+      if (newLinks.length > 0) socialLinks.value = newLinks
+    }
+  } catch (error) {
+    console.error('Failed to load settings in footer', error)
+  }
+})
 </script>
 
 <template>
@@ -55,15 +89,13 @@ const socialLinks = [
             />
             <div>
               <span class="block font-black text-base text-white leading-tight">Dusun Menggah</span>
-              <span class="block text-[10px] text-emerald-400 font-extrabold uppercase tracking-wider">Desa Katekan, Ngawi</span>
+              <span class="block text-[10px] text-emerald-400 font-extrabold uppercase tracking-wider">Desa Katekan, Gantiwarno, Klaten,
+            Jawa Tengah</span>
             </div>
           </div>
           <p class="text-xs text-slate-400 leading-relaxed font-semibold mb-6">
             Portal informasi resmi Dusun Menggah. Pusat informasi, dokumentasi kegiatan, dan publikasi potensi dusun untuk seluruh warga.
           </p>
-          <span class="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-wider font-extrabold text-emerald-300/90 bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-full">
-            <Sparkles :size="10" class="text-emerald-400" /> Gotong Royong Digital
-          </span>
         </div>
 
         <!-- Nav Links -->
@@ -96,15 +128,15 @@ const socialLinks = [
           <ul class="space-y-3.5 font-semibold text-xs text-slate-350">
             <li class="flex items-start gap-2.5">
               <MapPin :size="14" class="text-emerald-400 mt-0.5 shrink-0" />
-              <span class="leading-relaxed">Dusun Menggah, Desa Katekan, Kec. Ngawi, Kab. Ngawi, Jawa Timur 63261</span>
+              <span class="leading-relaxed">{{ address }}</span>
             </li>
             <li class="flex items-center gap-2.5">
               <Phone :size="14" class="text-emerald-400 shrink-0" />
-              <a href="https://wa.me/6281234567890" target="_blank" class="hover:text-emerald-350 transition-colors">+62 812-3456-7890</a>
+              <a :href="`https://wa.me/${phone.replace(/[^0-9]/g, '')}`" target="_blank" class="hover:text-emerald-350 transition-colors">{{ phone }}</a>
             </li>
             <li class="flex items-center gap-2.5">
               <Mail :size="14" class="text-emerald-400 shrink-0" />
-              <a href="mailto:dusunmenggah@gmail.com" class="hover:text-emerald-350 transition-colors">dusunmenggah@gmail.com</a>
+              <a :href="`mailto:${email}`" class="hover:text-emerald-350 transition-colors">{{ email }}</a>
             </li>
           </ul>
 
