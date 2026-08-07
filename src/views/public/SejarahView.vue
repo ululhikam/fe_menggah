@@ -102,7 +102,7 @@ const galleryItems: GalleryItem[] = [
       <Plus :size="16" class="stroke-[1.5]" />
     </div>
 
-    <!-- ===== HERO SECTION ===== -->
+    <!-- ===== HERO SECTION (Exact match with Visi Misi landscape hero banner) ===== -->
     <section
       class="relative w-full h-[55vh] md:h-[65vh] bg-slate-950 text-white flex items-center justify-center text-center overflow-hidden mb-8"
       aria-labelledby="hero-heading"
@@ -111,12 +111,12 @@ const galleryItems: GalleryItem[] = [
       <div class="absolute inset-0 z-0" aria-hidden="true">
         <img
           src="/images/misty_mountain_hero.png"
-          alt=""
+          alt="Bentang Alam Dusun Menggah"
           width="1920"
           height="1080"
           loading="eager"
           fetchpriority="high"
-          class="w-full h-full object-cover opacity-35 object-center scale-105"
+          class="w-full h-full object-cover opacity-35 object-center scale-102"
         />
         <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent" />
         <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#FAF9F6] to-transparent" />
@@ -125,13 +125,13 @@ const galleryItems: GalleryItem[] = [
       <div class="max-w-3xl mx-auto px-6 relative z-10 pt-12">
         <h1
           id="hero-heading"
-          class="text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight leading-none mb-4 font-sans text-white"
+          class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-none text-white font-sans mb-4"
         >
-          Sejarah <span class="font-serif italic font-medium text-emerald-300">Dusun Menggah</span>
+          Menelusuri Akar, <span class="text-emerald-300">Sejarah Dusun Menggah</span>
         </h1>
 
-        <p class="text-xs sm:text-sm text-slate-300 font-semibold max-w-xl mx-auto leading-relaxed">
-          Menelusuri akar tradisi dan kisah perjalanan panjang yang membentuk harmoni kehidupan masyarakat kami hari ini.
+        <p class="text-slate-300 text-xs sm:text-sm font-semibold max-w-xl mx-auto leading-relaxed">
+          Menelusuri akar tradisi, nilai kearifan lokal, dan kisah perjalanan panjang dari masa ke masa yang membentuk harmoni kehidupan masyarakat kami hari ini.
         </p>
       </div>
     </section>

@@ -1,6 +1,21 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { Megaphone, Pin, Tag, Calendar, Plus, Leaf, Search, ChevronRight, Sparkles } from 'lucide-vue-next'
+import { 
+  Megaphone, 
+  Pin, 
+  Tag, 
+  Calendar, 
+  Plus, 
+  Leaf, 
+  Search, 
+  ChevronRight, 
+  Sparkles, 
+  X, 
+  Copy, 
+  Check, 
+  MessageCircle,
+  ArrowRight
+} from 'lucide-vue-next'
 import api from '@/lib/api'
 
 interface Announcement {
@@ -8,6 +23,7 @@ interface Announcement {
   title: string
   content: string
   category?: string
+  priority?: string
   is_pinned?: boolean
   is_active?: boolean
   start_date?: string
@@ -18,6 +34,8 @@ interface Announcement {
 const loading = ref(true)
 const activeCategory = ref('Semua')
 const searchQuery = ref('')
+const selectedAnnouncement = ref<Announcement | null>(null)
+const copiedToast = ref(false)
 
 const announcements = ref<Announcement[]>([])
 const categories = ref(['Semua', 'Kesehatan', 'Kegiatan', 'PKK', 'Infrastruktur', 'Nasional'])
@@ -55,27 +73,64 @@ const filteredAnnouncements = computed(() => {
 
 function getCategoryColor(cat?: string) {
   const map: Record<string, string> = {
-    'Kesehatan': 'bg-red-50 text-red-700 border-red-100',
-    'Kegiatan': 'bg-green-50 text-green-700 border-green-100',
-    'PKK': 'bg-pink-50 text-pink-700 border-pink-100',
-    'Infrastruktur': 'bg-orange-50 text-orange-700 border-orange-100',
-    'Nasional': 'bg-blue-50 text-blue-700 border-blue-100',
+    'Kesehatan': 'bg-red-50 text-red-700 border-red-200/80',
+    'Kegiatan': 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+    'PKK': 'bg-pink-50 text-pink-700 border-pink-200/80',
+    'Infrastruktur': 'bg-amber-50 text-amber-700 border-amber-200/80',
+    'Nasional': 'bg-blue-50 text-blue-700 border-blue-200/80',
   }
-  return map[cat || ''] || 'bg-slate-50 text-slate-500 border-slate-100'
+  return map[cat || ''] || 'bg-slate-50 text-slate-600 border-slate-200'
 }
 
 function formatDate(d?: string) {
   if (!d) return ''
   return new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
 }
+
+function openDetail(item: Announcement) {
+  selectedAnnouncement.value = item
+}
+
+function closeDetail() {
+  selectedAnnouncement.value = null
+}
+
+function copyAnnouncementText() {
+  if (!selectedAnnouncement.value) return
+  const text = `${selectedAnnouncement.value.title}\n\n${selectedAnnouncement.value.content}\n\nDipublikasikan oleh Dusun Menggah (${formatDate(selectedAnnouncement.value.start_date || selectedAnnouncement.value.created_at)})`
+  navigator.clipboard.writeText(text)
+  copiedToast.value = true
+  setTimeout(() => {
+    copiedToast.value = false
+  }, 3000)
+}
+
+function shareAnnouncementWA() {
+  if (!selectedAnnouncement.value) return
+  const text = encodeURIComponent(`*PENGUMUMAN DUSUN MENGGAH*\n\n*${selectedAnnouncement.value.title}*\n\n${selectedAnnouncement.value.content}\n\n_Tanggal: ${formatDate(selectedAnnouncement.value.start_date || selectedAnnouncement.value.created_at)}_`)
+  window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank')
+}
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#FAF9F6] text-slate-800 font-sans overflow-x-hidden relative selection:bg-green-100 selection:text-green-800">
+  <div class="min-h-screen bg-[#FAF9F6] text-slate-800 font-sans overflow-x-hidden relative selection:bg-emerald-100 selection:text-emerald-800">
     
+    <!-- Copied Toast Notification -->
+    <Transition name="slide-down">
+      <div 
+        v-if="copiedToast" 
+        class="fixed top-6 right-6 z-[110] bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-slate-700/60 backdrop-blur"
+      >
+        <div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+          <Check :size="14" />
+        </div>
+        <span>Teks pengumuman berhasil disalin!</span>
+      </div>
+    </Transition>
+
     <!-- Decorative background glows -->
-    <div class="absolute top-[8%] left-[-150px] w-[300px] h-[300px] bg-green-200/15 rounded-full blur-[90px] pointer-events-none"></div>
-    <div class="absolute top-[40%] right-[-120px] w-[350px] h-[350px] bg-emerald-100/15 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute top-[8%] left-[-150px] w-[300px] h-[300px] bg-emerald-200/15 rounded-full blur-[90px] pointer-events-none"></div>
+    <div class="absolute top-[40%] right-[-120px] w-[350px] h-[350px] bg-teal-100/15 rounded-full blur-[100px] pointer-events-none"></div>
 
     <!-- Floating Pluses -->
     <div class="absolute top-36 left-[8%] text-slate-355 pointer-events-none"><Plus :size="20" class="stroke-[1.5]" /></div>
@@ -88,7 +143,7 @@ function formatDate(d?: string) {
         Informasi & <span class="font-serif italic font-medium">Pengumuman Resmi</span>
       </h1>
       <p class="text-slate-550 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed font-semibold mb-8">
-        Informasi dan pengumuman resmi dari perangkat Dusun Menggah untuk seluruh warga.
+        Informasi dan pengumuman resmi dari perangkat Dusun Menggah untuk seluruh warga. Klik pengumuman untuk membaca secara lengkap.
       </p>
 
       <!-- Centered Search Box -->
@@ -97,7 +152,7 @@ function formatDate(d?: string) {
           v-model="searchQuery" 
           type="text" 
           placeholder="Cari pengumuman..." 
-          class="w-full rounded-full border border-slate-200 bg-white text-slate-800 py-3 pl-5 pr-11 text-xs focus:outline-none focus:border-slate-400 font-semibold" 
+          class="w-full rounded-full border border-slate-200 bg-white text-slate-800 py-3 pl-5 pr-11 text-xs focus:outline-none focus:border-slate-400 font-semibold shadow-xs" 
         />
         <Search :size="13" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
       </div>
@@ -140,7 +195,8 @@ function formatDate(d?: string) {
         <div
           v-for="item in filteredAnnouncements.slice(0, 3)"
           :key="item.id"
-          class="group bg-[#FDFCFB] border border-slate-200/60 rounded-[2rem] p-6 shadow-xl shadow-slate-900/5 hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between"
+          @click="openDetail(item)"
+          class="group bg-[#FDFCFB] border border-slate-200/60 rounded-[2rem] p-6 shadow-xl shadow-slate-900/5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer relative"
         >
           <div>
             <!-- Banner megaphone box and pinned badge -->
@@ -161,19 +217,25 @@ function formatDate(d?: string) {
               </span>
             </div>
 
-            <h3 class="font-bold text-slate-900 text-sm leading-snug mb-2 line-clamp-2">
+            <h3 class="font-bold text-slate-900 text-sm leading-snug mb-2 line-clamp-2 group-hover:text-emerald-800 transition-colors">
               {{ item.title }}
             </h3>
             
-            <p class="text-slate-500 text-xs leading-relaxed font-semibold mb-4 line-clamp-3">
+            <p class="text-slate-500 text-xs leading-relaxed font-normal mb-4 line-clamp-3">
               {{ item.content }}
             </p>
           </div>
 
-          <!-- Date Footer -->
-          <div class="flex items-center gap-1.5 text-[10px] text-slate-400 font-bold border-t border-slate-100 pt-3.5 mt-2">
-            <Calendar :size="12" class="text-emerald-700" />
-            {{ formatDate(item.start_date || item.created_at) }}
+          <!-- Card Footer with Action -->
+          <div class="flex items-center justify-between text-[10px] text-slate-400 font-bold border-t border-slate-100 pt-3.5 mt-2">
+            <span class="flex items-center gap-1.5">
+              <Calendar :size="12" class="text-emerald-700" />
+              {{ formatDate(item.start_date || item.created_at) }}
+            </span>
+            
+            <span class="text-emerald-700 font-extrabold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+              Baca Detail <ArrowRight :size="12" />
+            </span>
           </div>
         </div>
       </div>
@@ -203,7 +265,10 @@ function formatDate(d?: string) {
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
         
         <!-- Left: Large Featured Pinned Card (First Item) -->
-        <div class="bg-[#FDFCFB] border border-slate-200/60 rounded-[2rem] p-6 sm:p-8 shadow-xl shadow-slate-900/5 hover:shadow-2xl transition-all duration-300">
+        <div 
+          @click="openDetail(filteredAnnouncements[0])"
+          class="bg-[#FDFCFB] border border-slate-200/60 rounded-[2rem] p-6 sm:p-8 shadow-xl shadow-slate-900/5 hover:shadow-2xl transition-all duration-300 cursor-pointer group"
+        >
           <div class="flex items-center justify-between mb-5">
             <span v-if="filteredAnnouncements[0].category" class="text-[9px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full border" :class="getCategoryColor(filteredAnnouncements[0].category)">
               Kategori: {{ filteredAnnouncements[0].category }}
@@ -213,17 +278,22 @@ function formatDate(d?: string) {
             </span>
           </div>
 
-          <h3 class="font-bold text-slate-955 text-lg sm:text-xl leading-snug mb-3">
+          <h3 class="font-bold text-slate-955 text-lg sm:text-xl leading-snug mb-3 group-hover:text-emerald-800 transition-colors">
             {{ filteredAnnouncements[0].title }}
           </h3>
           
-          <p class="text-slate-555 text-xs sm:text-sm leading-relaxed font-semibold mb-6 text-justify">
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed font-normal mb-6 text-justify">
             {{ filteredAnnouncements[0].content }}
           </p>
 
-          <div class="flex items-center gap-2 text-[10px] text-slate-400 font-bold border-t border-slate-100 pt-4">
-            <Calendar :size="12" class="text-emerald-700" />
-            Terbit: {{ formatDate(filteredAnnouncements[0].start_date || filteredAnnouncements[0].created_at) }}
+          <div class="flex items-center justify-between text-[10px] text-slate-400 font-bold border-t border-slate-100 pt-4">
+            <span class="flex items-center gap-1.5">
+              <Calendar :size="12" class="text-emerald-700" />
+              Terbit: {{ formatDate(filteredAnnouncements[0].start_date || filteredAnnouncements[0].created_at) }}
+            </span>
+            <span class="text-emerald-700 font-extrabold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+              Baca Selengkapnya <ChevronRight :size="13" />
+            </span>
           </div>
         </div>
 
@@ -232,10 +302,11 @@ function formatDate(d?: string) {
           <div
             v-for="item in filteredAnnouncements.slice(1, 4)" 
             :key="item.id"
-            class="flex gap-4 p-4.5 bg-white border border-slate-200/50 rounded-[1.8rem] hover:shadow-md transition-all duration-300 group items-center"
+            @click="openDetail(item)"
+            class="flex gap-4 p-4.5 bg-white border border-slate-200/50 rounded-[1.8rem] hover:shadow-md transition-all duration-300 group items-center cursor-pointer"
           >
             <!-- Megaphone icon circle -->
-            <div class="w-12 h-12 rounded-[1.2rem] overflow-hidden shrink-0 border border-slate-150 bg-slate-50 flex items-center justify-center text-slate-500">
+            <div class="w-12 h-12 rounded-[1.2rem] overflow-hidden shrink-0 border border-slate-150 bg-emerald-50 text-emerald-800 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
               <Megaphone :size="16" />
             </div>
 
@@ -247,7 +318,7 @@ function formatDate(d?: string) {
                 <span>{{ formatDate(item.start_date || item.created_at) }}</span>
               </div>
               
-              <h4 class="text-slate-900 font-extrabold text-xs sm:text-sm leading-snug line-clamp-1">
+              <h4 class="text-slate-900 font-extrabold text-xs sm:text-sm leading-snug line-clamp-1 group-hover:text-emerald-800 transition-colors">
                 {{ item.title }}
               </h4>
             </div>
@@ -266,6 +337,96 @@ function formatDate(d?: string) {
       </div>
     </section>
 
+    <!-- ===== ANNOUNCEMENT DETAIL MODAL ===== -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div 
+          v-if="selectedAnnouncement" 
+          class="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+          @click="closeDetail"
+        >
+          <div 
+            class="bg-white rounded-[2.5rem] max-w-2xl w-full p-6 sm:p-10 relative border border-slate-200/80 shadow-2xl my-8 animate-[scale-in_0.3s_ease-out]"
+            @click.stop
+          >
+            <!-- Close Button -->
+            <button 
+              @click="closeDetail" 
+              class="absolute top-6 right-6 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors shadow-xs"
+              title="Tutup"
+            >
+              <X :size="18" />
+            </button>
+
+            <!-- Header Meta Badges -->
+            <div class="flex flex-wrap items-center gap-2 mb-6">
+              <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-800 flex items-center justify-center border border-emerald-100">
+                <Megaphone :size="18" />
+              </div>
+
+              <span 
+                v-if="selectedAnnouncement.category" 
+                class="text-[9px] font-extrabold uppercase tracking-widest px-3 py-1 rounded-full border"
+                :class="getCategoryColor(selectedAnnouncement.category)"
+              >
+                {{ selectedAnnouncement.category }}
+              </span>
+
+              <span 
+                v-if="selectedAnnouncement.is_pinned" 
+                class="text-amber-700 bg-amber-50 border border-amber-100 text-[9px] font-extrabold px-3 py-1 rounded-full flex items-center gap-1"
+              >
+                <Sparkles :size="10" /> Disematkan
+              </span>
+            </div>
+
+            <!-- Title -->
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-950 font-sans leading-snug mb-4">
+              {{ selectedAnnouncement.title }}
+            </h2>
+
+            <!-- Published Date -->
+            <div class="flex items-center gap-2 text-xs font-semibold text-slate-400 pb-4 mb-6 border-b border-slate-100">
+              <Calendar :size="14" class="text-emerald-600" />
+              Dipublikasikan pada: {{ formatDate(selectedAnnouncement.start_date || selectedAnnouncement.created_at) }}
+            </div>
+
+            <!-- Full Announcement Content Container -->
+            <div class="bg-slate-50/80 border border-slate-200/60 rounded-2xl p-5 sm:p-6 mb-8 text-slate-700 text-sm leading-relaxed whitespace-pre-line font-normal text-justify">
+              {{ selectedAnnouncement.content }}
+            </div>
+
+            <!-- Action Buttons Footer -->
+            <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-100">
+              <div class="flex items-center gap-2">
+                <button 
+                  @click="shareAnnouncementWA"
+                  class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 transition-all shadow-xs"
+                >
+                  <MessageCircle :size="15" /> Bagikan WhatsApp
+                </button>
+
+                <button 
+                  @click="copyAnnouncementText"
+                  class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-2 transition-all"
+                >
+                  <Copy :size="14" /> Salin Teks
+                </button>
+              </div>
+
+              <button 
+                @click="closeDetail" 
+                class="px-5 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-900 text-white font-bold text-xs transition-all uppercase tracking-wider"
+              >
+                Tutup
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
   </div>
 </template>
 
@@ -276,5 +437,14 @@ function formatDate(d?: string) {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

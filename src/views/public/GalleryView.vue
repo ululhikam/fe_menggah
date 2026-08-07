@@ -1,6 +1,18 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Image as ImageIcon, X, ArrowUpRight, Plus, Leaf, Search, Sparkles } from 'lucide-vue-next'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { 
+  Image as ImageIcon, 
+  X, 
+  ArrowUpRight, 
+  Plus, 
+  Leaf, 
+  Search, 
+  Sparkles, 
+  ChevronLeft, 
+  ChevronRight,
+  Maximize2,
+  Tag
+} from 'lucide-vue-next'
 import api from '@/lib/api'
 
 const categories = [
@@ -10,13 +22,13 @@ const categories = [
   { key: 'budaya', label: 'Warisan Budaya' },
   { key: 'kegiatan', label: 'Kegiatan Warga' },
 ]
+
 const activeCategory = ref('semua')
 const searchQuery = ref('')
 const loading = ref(true)
 
 const galleryItems = ref<any[]>([])
-
-const selectedItem = ref<any | null>(null)
+const selectedIndex = ref<number | null>(null)
 
 const filteredGallery = computed(() => {
   let list = [...galleryItems.value]
@@ -26,21 +38,60 @@ const filteredGallery = computed(() => {
   if (searchQuery.value.trim() !== '') {
     const q = searchQuery.value.toLowerCase()
     list = list.filter(i => 
-      i.title.toLowerCase().includes(q) || 
-      i.desc.toLowerCase().includes(q) || 
-      i.category.toLowerCase().includes(q)
+      i.title?.toLowerCase().includes(q) || 
+      i.desc?.toLowerCase().includes(q) || 
+      i.description?.toLowerCase().includes(q) || 
+      i.category?.toLowerCase().includes(q)
     )
   }
   return list
 })
 
+const selectedItem = computed(() => {
+  if (selectedIndex.value === null || selectedIndex.value < 0) return null
+  return filteredGallery.value[selectedIndex.value] || null
+})
+
+function openLightbox(item: any) {
+  const index = filteredGallery.value.findIndex(i => i.id === item.id)
+  selectedIndex.value = index !== -1 ? index : 0
+}
+
+function closeLightbox() {
+  selectedIndex.value = null
+}
+
+function prevPhoto() {
+  if (selectedIndex.value === null) return
+  if (selectedIndex.value > 0) {
+    selectedIndex.value -= 1
+  } else {
+    selectedIndex.value = filteredGallery.value.length - 1
+  }
+}
+
+function nextPhoto() {
+  if (selectedIndex.value === null) return
+  if (selectedIndex.value < filteredGallery.value.length - 1) {
+    selectedIndex.value += 1
+  } else {
+    selectedIndex.value = 0
+  }
+}
+
+function handleKeyDown(e: KeyboardEvent) {
+  if (selectedIndex.value === null) return
+  if (e.key === 'Escape') closeLightbox()
+  if (e.key === 'ArrowLeft') prevPhoto()
+  if (e.key === 'ArrowRight') nextPhoto()
+}
+
 function filterGallery(cat: string) {
   activeCategory.value = cat
 }
 
-import { onMounted } from 'vue'
-
 onMounted(async () => {
+  window.addEventListener('keydown', handleKeyDown)
   try {
     loading.value = true
     const res = await api.get('/public/gallery?per_page=100')
@@ -53,14 +104,18 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown)
+})
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#FAF9F6] text-slate-800 font-sans overflow-x-hidden relative selection:bg-green-100 selection:text-green-800">
+  <div class="min-h-screen bg-[#FAF9F6] text-slate-800 font-sans overflow-x-hidden relative selection:bg-emerald-100 selection:text-emerald-800">
     
     <!-- Decorative background glows -->
-    <div class="absolute top-[8%] left-[-150px] w-[300px] h-[300px] bg-green-200/15 rounded-full blur-[90px] pointer-events-none"></div>
-    <div class="absolute top-[40%] right-[-120px] w-[350px] h-[350px] bg-emerald-100/15 rounded-full blur-[100px] pointer-events-none"></div>
+    <div class="absolute top-[8%] left-[-150px] w-[300px] h-[300px] bg-emerald-200/15 rounded-full blur-[90px] pointer-events-none"></div>
+    <div class="absolute top-[40%] right-[-120px] w-[350px] h-[350px] bg-teal-100/15 rounded-full blur-[100px] pointer-events-none"></div>
 
     <!-- Floating Pluses -->
     <div class="absolute top-36 left-[8%] text-slate-355 pointer-events-none"><Plus :size="20" class="stroke-[1.5]" /></div>
@@ -73,7 +128,7 @@ onMounted(async () => {
         Dokumentasi & <span class="font-serif italic font-medium">Potensi Dusun</span>
       </h1>
       <p class="text-slate-550 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed font-semibold mb-8">
-        Jelajahi keindahan tersembunyi, peninggalan adat, hasil tani kopi rakyat, hingga produk kreatif UMKM unggulan kami.
+        Jelajahi keindahan tersembunyi, peninggalan adat, hasil tani kopi rakyat, hingga produk kreatif UMKM unggulan kami. Klik foto untuk memperbesar tampilan full-screen.
       </p>
 
       <!-- Centered Search Box -->
@@ -82,7 +137,7 @@ onMounted(async () => {
           v-model="searchQuery" 
           type="text" 
           placeholder="Cari dokumentasi potensi..." 
-          class="w-full rounded-full border border-slate-200 bg-white text-slate-800 py-3 pl-5 pr-11 text-xs focus:outline-none focus:border-slate-400 font-semibold" 
+          class="w-full rounded-full border border-slate-200 bg-white text-slate-800 py-3 pl-5 pr-11 text-xs focus:outline-none focus:border-slate-400 font-semibold shadow-xs" 
         />
         <Search :size="13" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
       </div>
@@ -110,51 +165,62 @@ onMounted(async () => {
 
     <!-- ===== SECTION 1: TOP PICKS (3 Columns Grid) ===== -->
     <section class="max-w-6xl mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      
+      <!-- Skeleton Loading -->
+      <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div v-for="i in 3" :key="i" class="bg-white border border-slate-200/50 rounded-[2rem] p-5 animate-pulse">
+          <div class="w-full h-52 bg-slate-100 rounded-[1.5rem] mb-4"></div>
+          <div class="h-4 bg-slate-100 rounded w-3/4 mb-2"></div>
+          <div class="h-3 bg-slate-100 rounded w-1/2"></div>
+        </div>
+      </div>
+
+      <!-- Gallery Grid -->
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div 
           v-for="item in filteredGallery.slice(0, 3)" 
           :key="item.id" 
-          @click="selectedItem = item"
-          class="group bg-[#FDFCFB] border border-slate-200/60 rounded-[2rem] p-5 shadow-xl shadow-slate-900/5 hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between cursor-pointer"
+          @click="openLightbox(item)"
+          class="group bg-[#FDFCFB] border border-slate-200/60 rounded-[2rem] p-5 shadow-xl shadow-slate-900/5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer"
         >
           <div>
             <!-- Cover image frame with hover overlay zoom button -->
-            <div class="relative w-full h-52 overflow-hidden rounded-[1.5rem] mb-4 bg-slate-50 border border-slate-100 flex items-center justify-center">
+            <div class="relative w-full h-56 overflow-hidden rounded-[1.5rem] mb-4 bg-slate-100 border border-slate-200/60 flex items-center justify-center">
               <img 
                 :src="item.image_url || item.image" 
                 :alt="item.title"
-                class="w-full h-full object-cover scale-100 group-hover:scale-103 transition-transform duration-500"
+                class="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-500"
               />
               
               <!-- Hover Overlay Button -->
-              <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <span class="bg-white text-slate-900 text-[10px] font-extrabold px-4.5 py-2 rounded-full shadow-lg border border-slate-100 flex items-center gap-1 scale-95 group-hover:scale-100 transition-all duration-300">
-                  Lihat Foto <ArrowUpRight :size="12" />
+              <div class="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-xs">
+                <span class="bg-white text-slate-950 text-xs font-extrabold px-5 py-2.5 rounded-full shadow-2xl border border-white/40 flex items-center gap-1.5 scale-90 group-hover:scale-100 transition-all duration-300">
+                  <Maximize2 :size="14" /> Perbesar Full Foto
                 </span>
               </div>
 
-              <span class="absolute top-3 right-3 bg-white border border-slate-100 text-[8px] uppercase tracking-wider font-extrabold text-emerald-800 px-3 py-1 rounded-full shadow-sm">
+              <span class="absolute top-3 right-3 bg-white/90 backdrop-blur border border-white/60 text-[8px] uppercase tracking-wider font-extrabold text-emerald-800 px-3 py-1 rounded-full shadow-sm">
                 {{ item.category }}
               </span>
             </div>
             
-            <h3 class="font-bold text-slate-900 text-sm leading-snug mb-1.5">
+            <h3 class="font-bold text-slate-900 text-sm leading-snug mb-1.5 group-hover:text-emerald-800 transition-colors">
               {{ item.title }}
             </h3>
             
-            <p class="text-slate-555 text-xs leading-relaxed font-semibold mb-4">
+            <p class="text-slate-550 text-xs leading-relaxed font-semibold mb-4 line-clamp-2">
               {{ item.description || item.desc || 'Tidak ada deskripsi' }}
             </p>
           </div>
           
           <!-- Zoom indicator footer -->
           <span class="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-widest font-extrabold text-emerald-700 mt-auto pt-3 border-t border-slate-100 group-hover:text-emerald-950">
-            Detail Potensi <ArrowUpRight :size="12" />
+            Perbesar Visual <ArrowUpRight :size="12" />
           </span>
         </div>
       </div>
       
-      <div v-if="filteredGallery.length === 0" class="text-center py-16">
+      <div v-if="!loading && filteredGallery.length === 0" class="text-center py-16">
         <p class="text-slate-400 font-semibold flex items-center justify-center gap-1.5">
           <Leaf :size="16" /> Belum ada dokumentasi galeri yang ditemukan.
         </p>
@@ -162,7 +228,7 @@ onMounted(async () => {
     </section>
 
     <!-- ===== SECTION 2: SHOWCASES SPLIT SECTION ===== -->
-    <section v-if="filteredGallery.length > 0" class="max-w-6xl mx-auto px-4 py-16 border-t border-slate-200/50 mt-8">
+    <section v-if="!loading && filteredGallery.length > 0" class="max-w-6xl mx-auto px-4 py-16 border-t border-slate-200/50 mt-8">
       
       <!-- Section Title -->
       <div class="text-center mb-12">
@@ -180,7 +246,7 @@ onMounted(async () => {
         
         <!-- Left: Large Featured Showcase Card (First Item) -->
         <div 
-          @click="selectedItem = filteredGallery[0]"
+          @click="openLightbox(filteredGallery[0])"
           class="bg-[#FDFCFB] border border-slate-200/60 rounded-[2rem] p-6 sm:p-8 shadow-xl shadow-slate-900/5 hover:shadow-2xl transition-all duration-300 group cursor-pointer"
         >
           <div class="flex items-center justify-between mb-4">
@@ -192,25 +258,30 @@ onMounted(async () => {
             </span>
           </div>
 
-          <h3 class="font-bold text-slate-955 text-xl sm:text-2xl leading-snug mb-3">
+          <h3 class="font-bold text-slate-955 text-xl sm:text-2xl leading-snug mb-3 group-hover:text-emerald-800 transition-colors">
             {{ filteredGallery[0].title }}
           </h3>
           
-          <p class="text-slate-555 text-xs sm:text-sm leading-relaxed font-semibold mb-6">
+          <p class="text-slate-600 text-xs sm:text-sm leading-relaxed font-semibold mb-6">
             {{ filteredGallery[0].description || filteredGallery[0].desc }}
           </p>
 
           <!-- Large image frame -->
-          <div class="relative w-full h-64 sm:h-80 overflow-hidden rounded-[1.8rem] mb-4 bg-slate-50 border border-slate-100">
+          <div class="relative w-full h-64 sm:h-80 overflow-hidden rounded-[1.8rem] mb-4 bg-slate-100 border border-slate-200/60">
             <img 
               :src="filteredGallery[0].image_url || filteredGallery[0].image" 
               :alt="filteredGallery[0].title"
-              class="w-full h-full object-cover scale-100 group-hover:scale-102 transition-transform duration-[1.5s]"
+              class="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-700"
             />
+            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="bg-white text-slate-950 text-xs font-extrabold px-5 py-2.5 rounded-full shadow-2xl flex items-center gap-1.5">
+                <Maximize2 :size="14" /> Perbesar Full Foto
+              </span>
+            </div>
           </div>
 
           <span class="inline-flex items-center gap-1.5 text-[9px] uppercase tracking-widest font-extrabold text-emerald-700 mt-2">
-            Klik Untuk Perbesar <ArrowUpRight :size="12" />
+            Klik Untuk Tampilan Penuh <ArrowUpRight :size="12" />
           </span>
         </div>
 
@@ -219,7 +290,7 @@ onMounted(async () => {
           <div
             v-for="item in filteredGallery.slice(1, 4)" 
             :key="item.id"
-            @click="selectedItem = item"
+            @click="openLightbox(item)"
             class="flex gap-4 p-4.5 bg-white border border-slate-200/50 rounded-[1.8rem] hover:shadow-md transition-all duration-300 group items-center cursor-pointer"
           >
             <!-- Small rounded cover -->
@@ -237,7 +308,7 @@ onMounted(async () => {
                 {{ item.category }}
               </span>
               
-              <h4 class="text-slate-900 font-extrabold text-xs sm:text-sm leading-snug line-clamp-1 mb-1">
+              <h4 class="text-slate-900 font-extrabold text-xs sm:text-sm leading-snug line-clamp-1 mb-1 group-hover:text-emerald-800 transition-colors">
                 {{ item.title }}
               </h4>
               <p class="text-[10px] text-slate-400 font-bold line-clamp-2 leading-relaxed">
@@ -259,50 +330,81 @@ onMounted(async () => {
       </div>
     </section>
 
-    <!-- Lightbox Modal -->
-    <teleport to="body">
-      <transition name="fade">
+    <!-- FULL SCREEN PHOTO LIGHTBOX MODAL -->
+    <Teleport to="body">
+      <Transition name="fade">
         <div 
           v-if="selectedItem" 
-          class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4" 
-          @click="selectedItem = null"
+          class="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col justify-between overflow-hidden" 
+          @click="closeLightbox"
         >
-          <div 
-            class="bg-white rounded-[2.5rem] max-w-2xl w-full p-6 md:p-10 relative border border-slate-200/60 shadow-xl animate-[scale-in_0.35s_cubic-bezier(0.16,1,0.3,1)]" 
-            @click.stop
-          >
-            <button 
-              @click="selectedItem = null" 
-              class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors animate-none"
-            >
-              <X :size="16" />
-            </button>
+          <!-- Top Control Header Bar -->
+          <div class="p-4 sm:p-6 flex items-center justify-between z-20 text-white bg-gradient-to-b from-black/80 to-transparent" @click.stop>
+            <div class="flex items-center gap-3">
+              <span class="text-xs uppercase tracking-widest font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3.5 py-1 rounded-full flex items-center gap-1.5">
+                <Tag :size="12" /> {{ selectedItem.category }}
+              </span>
+              <span class="text-xs text-slate-400 font-medium hidden sm:inline">
+                Foto {{ (selectedIndex ?? 0) + 1 }} dari {{ filteredGallery.length }}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <button 
+                @click="closeLightbox" 
+                class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors border border-white/20 shadow-lg"
+                title="Tutup (Esc)"
+              >
+                <X :size="20" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Center Photo Viewport with Prev / Next Floating Arrows -->
+          <div class="flex-1 relative flex items-center justify-center px-4 sm:px-12 py-2" @click.stop>
             
-            <div class="w-full h-72 overflow-hidden rounded-[1.8rem] mb-6 border border-slate-100">
+            <!-- Previous Button -->
+            <button 
+              @click.stop="prevPhoto"
+              class="absolute left-3 sm:left-8 z-30 w-12 h-12 rounded-full bg-black/40 hover:bg-white/20 text-white border border-white/20 flex items-center justify-center transition-all duration-200 backdrop-blur-md"
+              title="Foto Sebelumnya (Panah Kiri)"
+            >
+              <ChevronLeft :size="24" />
+            </button>
+
+            <!-- Full Screen Image Container -->
+            <div class="max-w-6xl max-h-[75vh] sm:max-h-[82vh] flex items-center justify-center transition-all duration-300">
               <img 
                 :src="selectedItem.image_url || selectedItem.image" 
                 :alt="selectedItem.title"
-                class="w-full h-full object-cover"
+                class="max-h-[75vh] sm:max-h-[82vh] w-auto max-w-full object-contain rounded-2xl shadow-2xl border border-white/10 select-none animate-[scale-in_0.25s_ease-out]"
               />
             </div>
-            
-            <span class="inline-block text-[9px] uppercase tracking-widest font-extrabold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
-              {{ selectedItem.category }}
-            </span>
-            
-            <h2 class="text-xl font-bold text-slate-950 mt-4 mb-2.5 font-sans leading-snug">{{ selectedItem.title }}</h2>
-            <p class="text-slate-500 text-xs leading-relaxed font-semibold mb-6">{{ selectedItem.description || selectedItem.desc }}</p>
-            
+
+            <!-- Next Button -->
             <button 
-              @click="selectedItem = null" 
-              class="w-full sm:w-auto inline-flex items-center justify-center bg-slate-950 hover:bg-slate-900 text-white font-extrabold px-6 py-3 rounded-full text-xs uppercase tracking-widest transition-colors duration-300"
+              @click.stop="nextPhoto"
+              class="absolute right-3 sm:right-8 z-30 w-12 h-12 rounded-full bg-black/40 hover:bg-white/20 text-white border border-white/20 flex items-center justify-center transition-all duration-200 backdrop-blur-md"
+              title="Foto Selanjutnya (Panah Kanan)"
             >
-              Tutup Galeri
+              <ChevronRight :size="24" />
             </button>
           </div>
+
+          <!-- Bottom Full Caption & Description Bar -->
+          <div class="p-6 sm:p-8 bg-gradient-to-t from-black via-black/90 to-transparent z-20 text-white border-t border-white/10" @click.stop>
+            <div class="max-w-4xl mx-auto space-y-2">
+              <h2 class="text-lg sm:text-2xl font-bold font-sans tracking-tight text-white leading-snug">
+                {{ selectedItem.title }}
+              </h2>
+              <p class="text-slate-300 text-xs sm:text-sm leading-relaxed font-normal max-w-3xl">
+                {{ selectedItem.description || selectedItem.desc || 'Dokumentasi potensi dan keindahan Dusun Menggah, Desa Katekan.' }}
+              </p>
+            </div>
+          </div>
         </div>
-      </transition>
-    </teleport>
+      </Transition>
+    </Teleport>
 
   </div>
 </template>

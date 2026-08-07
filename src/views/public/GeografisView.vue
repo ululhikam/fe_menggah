@@ -60,22 +60,23 @@ import { Compass, MapPin, Plus, Sparkles, Map, ExternalLink } from 'lucide-vue-n
                 Pemetaan wilayah administratif dusun
               </p>
 
-              <!-- Map Image Frame -->
-              <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 shadow-inner">
-                <img 
-                  src="/images/village_landscape_map.png" 
-                  alt="Peta Administratif Dusun Menggah" 
-                  class="w-full h-full object-cover"
-                />
-                
-                <!-- Custom Marker Point overlay -->
-                <div class="absolute top-[52%] left-[48%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-                  <div class="w-8 h-8 rounded-full bg-[#8C6D58] border-2 border-white flex items-center justify-center shadow-lg text-white">
-                    <MapPin :size="14" class="text-white" />
-                  </div>
-                  <span class="mt-1 bg-white border border-slate-200 text-[8px] font-black uppercase tracking-wider text-slate-800 px-2 py-0.5 rounded shadow-sm whitespace-nowrap">
-                    Pusat Dusun Menggah
-                  </span>
+              <!-- Real Interactive Google Maps Frame -->
+              <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner group">
+                <iframe 
+                  src="https://maps.google.com/maps?q=-7.7688889,110.5500000&hl=id&z=15&output=embed" 
+                  width="100%" 
+                  height="100%" 
+                  style="border:0;" 
+                  :allowfullscreen="true" 
+                  loading="lazy" 
+                  referrerpolicy="no-referrer-when-downgrade"
+                  class="w-full h-full min-h-[300px] rounded-2xl"
+                  title="Peta Lokasi Dusun Menggah, Katekan, Gantiwarno"
+                ></iframe>
+
+                <!-- Location Badge -->
+                <div class="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md border border-slate-200/80 text-[10px] font-extrabold text-slate-800 px-3 py-1.5 rounded-xl shadow-md flex items-center gap-1.5 pointer-events-none">
+                  <MapPin :size="12" class="text-emerald-700" /> Pusat Dusun Menggah, Katekan (-7.7689, 110.5500)
                 </div>
               </div>
             </div>
