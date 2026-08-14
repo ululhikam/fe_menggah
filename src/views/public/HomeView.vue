@@ -113,7 +113,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#FAF9F6] text-slate-800 font-sans overflow-x-hidden relative selection:bg-green-100 selection:text-green-800">
+  <main class="min-h-screen bg-[#FAF9F6] text-slate-800 font-sans overflow-x-hidden relative selection:bg-green-100 selection:text-green-800">
     
     <!-- Decorative organic background features -->
     <div class="absolute top-[10%] left-[-100px] w-[350px] h-[350px] bg-green-200/20 rounded-full blur-[100px] pointer-events-none"></div>
@@ -641,7 +641,7 @@ onMounted(() => {
       </div>
     </section>
 
-  </div>
+  </main>
 </template>
 
 <style scoped>

@@ -19,6 +19,7 @@ import {
   LogIn,
   Search,
   BookOpen,
+  Smartphone,
 } from 'lucide-vue-next'
 
 const authStore = useAuthStore()
@@ -202,6 +203,15 @@ function isDropdownActive(subLinks: { to: string }[]) {
           </transition>
         </div>
 
+        <!-- Aplikasi -->
+        <RouterLink
+          to="/aplikasi"
+          class="text-[11px] uppercase tracking-wider font-extrabold px-3 py-2 rounded-xl transition-colors duration-200"
+          :class="isActive('/aplikasi') ? 'bg-green-50 text-green-700 shadow-sm' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'"
+        >
+          Aplikasi
+        </RouterLink>
+
         <!-- Kontak -->
         <RouterLink
           to="/kontak"
@@ -342,6 +352,15 @@ function isDropdownActive(subLinks: { to: string }[]) {
           </RouterLink>
 
           <hr class="border-slate-100 my-2">
+
+          <RouterLink
+            to="/aplikasi"
+            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-colors"
+            :class="isActive('/aplikasi') ? 'bg-green-50 text-green-700' : 'text-slate-600 hover:bg-slate-50'"
+            @click="mobileMenuOpen = false"
+          >
+            <Smartphone :size="15" /> Aplikasi CashIn
+          </RouterLink>
 
           <RouterLink
             to="/kontak"

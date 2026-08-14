@@ -97,6 +97,12 @@ export const publicRoutes: RouteRecordRaw[] = [
         meta: { title: 'Arsip — Dusun Menggah' },
       },
       {
+        path: 'aplikasi',
+        name: 'Aplikasi',
+        component: () => import('@/views/public/DownloadView.vue'),
+        meta: { title: 'Aplikasi CashIn — Dusun Menggah' },
+      },
+      {
         path: 'kontak',
         name: 'Kontak',
         component: () => import('@/views/public/KontakView.vue'),
