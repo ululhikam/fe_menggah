@@ -103,13 +103,19 @@ const statusLabels: Record<string, string> = { upcoming: 'Akan Datang', ongoing:
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div class="flex items-center justify-between">
+  <div class="space-y-6 animate-[fade-in_0.4s_ease-out]">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-surface-900">Manajemen Agenda</h1>
+        <h1 class="text-2xl font-bold text-surface-900 flex items-center gap-2">
+          <Calendar :size="24" class="text-green-600" /> Manajemen Agenda
+        </h1>
         <p class="text-sm text-surface-500 mt-1">Kelola jadwal kegiatan Dusun Menggah.</p>
       </div>
-      <button @click="openCreate" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors shadow-sm">
+      <button 
+        @click="openCreate" 
+        class="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm active:scale-95"
+      >
         <Plus :size="16" /> Tambah Agenda
       </button>
     </div>
@@ -119,7 +125,7 @@ const statusLabels: Record<string, string> = { upcoming: 'Akan Datang', ongoing:
       <div v-else class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
-            <tr class="border-b border-surface-200">
+            <tr class="border-b border-surface-200 bg-surface-50">
               <th class="text-left py-3 px-4 font-semibold text-surface-500 text-xs uppercase tracking-wider">Kegiatan</th>
               <th class="text-left py-3 px-4 font-semibold text-surface-500 text-xs uppercase tracking-wider">Tanggal</th>
               <th class="text-left py-3 px-4 font-semibold text-surface-500 text-xs uppercase tracking-wider">Lokasi</th>
@@ -145,8 +151,20 @@ const statusLabels: Record<string, string> = { upcoming: 'Akan Datang', ongoing:
               </td>
               <td class="py-3.5 px-4 text-right">
                 <div class="flex items-center justify-end gap-2">
-                  <button @click="openEdit(item)" class="p-1.5 rounded-lg text-surface-400 hover:text-green-600 hover:bg-green-50 transition-colors"><Edit2 :size="15" /></button>
-                  <button @click="deleteTarget = item" class="p-1.5 rounded-lg text-surface-400 hover:text-red-600 hover:bg-red-50 transition-colors"><Trash2 :size="15" /></button>
+                  <button 
+                    @click="openEdit(item)" 
+                    class="p-1.5 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700 transition-all active:scale-95 flex items-center justify-center"
+                    title="Edit"
+                  >
+                    <Edit2 :size="14" />
+                  </button>
+                  <button 
+                    @click="deleteTarget = item" 
+                    class="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition-all active:scale-95 flex items-center justify-center"
+                    title="Hapus"
+                  >
+                    <Trash2 :size="14" />
+                  </button>
                 </div>
               </td>
             </tr>
@@ -155,41 +173,75 @@ const statusLabels: Record<string, string> = { upcoming: 'Akan Datang', ongoing:
       </div>
     </div>
 
+    <!-- Modal Form -->
     <Teleport to="body">
-      <div v-if="showModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-          <div class="p-6 border-b border-gray-100">
-            <h2 class="text-lg font-black text-gray-900">{{ editingItem ? 'Edit Agenda' : 'Tambah Agenda' }}</h2>
+      <div v-if="showModal" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl animate-[fade-in_0.2s_ease-out]">
+          <div class="p-6 border-b border-surface-100 flex items-center justify-between">
+            <h2 class="text-base font-black text-surface-900">{{ editingItem ? 'Edit Agenda' : 'Tambah Agenda' }}</h2>
+            <button 
+              @click="showModal = false" 
+              class="p-1.5 rounded-lg text-surface-400 hover:bg-surface-100 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="2 2 20 20" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
           <form @submit.prevent="save" class="p-6 space-y-4">
             <div>
-              <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Judul Kegiatan</label>
-              <input v-model="form.title" type="text" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500" />
+              <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Judul Kegiatan *</label>
+              <input 
+                v-model="form.title" 
+                type="text" 
+                required 
+                class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white" 
+              />
             </div>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Tanggal Mulai</label>
-                <input v-model="form.start_date" type="datetime-local" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500" />
+                <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Tanggal Mulai *</label>
+                <input 
+                  v-model="form.start_date" 
+                  type="datetime-local" 
+                  required 
+                  class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white" 
+                />
               </div>
               <div>
-                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Tanggal Selesai</label>
-                <input v-model="form.end_date" type="datetime-local" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500" />
+                <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Tanggal Selesai</label>
+                <input 
+                  v-model="form.end_date" 
+                  type="datetime-local" 
+                  class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white" 
+                />
               </div>
             </div>
             <div>
-              <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Lokasi</label>
-              <input v-model="form.location" type="text" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500" placeholder="Nama lokasi kegiatan..." />
+              <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Lokasi</label>
+              <input 
+                v-model="form.location" 
+                type="text" 
+                class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white" 
+                placeholder="Nama lokasi kegiatan..." 
+              />
             </div>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Kategori</label>
-                <select v-model="form.category" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500">
+                <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Kategori</label>
+                <select 
+                  v-model="form.category" 
+                  class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white"
+                >
                   <option v-for="c in ['Rapat', 'Kegiatan', 'Kesehatan', 'Pelatihan', 'Nasional', 'Lainnya']" :key="c">{{ c }}</option>
                 </select>
               </div>
               <div>
-                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Status</label>
-                <select v-model="form.status" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500">
+                <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Status</label>
+                <select 
+                  v-model="form.status" 
+                  class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white"
+                >
                   <option value="upcoming">Akan Datang</option>
                   <option value="ongoing">Berlangsung</option>
                   <option value="done">Selesai</option>
@@ -197,12 +249,26 @@ const statusLabels: Record<string, string> = { upcoming: 'Akan Datang', ongoing:
               </div>
             </div>
             <div>
-              <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Deskripsi</label>
-              <textarea v-model="form.description" rows="4" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm resize-none focus:outline-none focus:border-green-500"></textarea>
+              <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Deskripsi</label>
+              <textarea 
+                v-model="form.description" 
+                rows="4" 
+                class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white"
+              ></textarea>
             </div>
-            <div class="flex justify-end gap-3 pt-2">
-              <button type="button" @click="showModal = false" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100">Batal</button>
-              <button type="submit" :disabled="saving" class="px-6 py-2.5 rounded-xl text-sm font-semibold bg-green-600 hover:bg-green-700 text-white disabled:opacity-50">
+            <div class="flex justify-end gap-3 pt-4 border-t border-surface-100">
+              <button 
+                type="button" 
+                @click="showModal = false" 
+                class="px-4 py-2.5 rounded-xl text-sm font-semibold text-surface-600 hover:bg-surface-100 transition-colors"
+              >
+                Batal
+              </button>
+              <button 
+                type="submit" 
+                :disabled="saving" 
+                class="px-6 py-2.5 rounded-xl text-sm font-semibold bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 transition-colors shadow-sm active:scale-95"
+              >
                 {{ saving ? 'Menyimpan...' : 'Simpan' }}
               </button>
             </div>

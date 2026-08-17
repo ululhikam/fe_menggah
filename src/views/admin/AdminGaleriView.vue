@@ -108,14 +108,16 @@ loadGallery()
   <div class="space-y-6 animate-[fade-in_0.4s_ease-out]">
 
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-surface-900">Manajemen Galeri</h1>
+        <h1 class="text-2xl font-bold text-surface-900 flex items-center gap-2">
+          <ImageIcon :size="24" class="text-green-600" /> Manajemen Galeri
+        </h1>
         <p class="text-sm text-surface-500 mt-1">Kelola foto dan dokumentasi Dusun Menggah.</p>
       </div>
       <button
         @click="openCreate"
-        class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors shadow-sm"
+        class="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm active:scale-95"
       >
         <Plus :size="16" /> Tambah Foto
       </button>
@@ -123,26 +125,26 @@ loadGallery()
 
     <!-- Category filter + Search -->
     <div class="flex flex-wrap gap-3 items-center">
-      <div class="flex gap-1.5 overflow-x-auto flex-1">
+      <div class="flex gap-1.5 overflow-x-auto flex-1 pb-1 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">
         <button
           v-for="cat in categories"
           :key="cat.key"
           @click="activeCategory = cat.key"
-          class="flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold transition-all"
+          class="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border"
           :class="activeCategory === cat.key
-            ? 'bg-green-600 text-white shadow-sm'
-            : 'bg-white border border-surface-200 text-surface-500 hover:text-surface-900'"
+            ? 'bg-green-600 border-green-600 text-white shadow-sm'
+            : 'bg-white border-surface-200 text-surface-500 hover:text-surface-900 hover:bg-surface-50'"
         >
           {{ cat.label }}
         </button>
       </div>
-      <div class="relative">
+      <div class="relative w-full sm:w-auto">
         <Search :size="14" class="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400" />
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Cari..."
-          class="pl-9 pr-4 py-1.5 border border-surface-200 rounded-xl text-sm focus:outline-none focus:border-green-500"
+          class="w-full sm:w-auto pl-9 pr-4 py-1.5 border border-surface-200 rounded-xl text-sm focus:outline-none focus:border-green-500 bg-white"
         />
       </div>
     </div>
@@ -178,15 +180,18 @@ loadGallery()
           loading="lazy"
           class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all flex flex-col items-end justify-start p-2 opacity-0 group-hover:opacity-100">
+        
+        <!-- Delete Button (always visible on mobile, hover on desktop) -->
+        <div class="absolute top-2 right-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 z-10">
           <button
             @click="deleteTarget = item"
-            class="p-2 rounded-xl bg-red-500 hover:bg-red-600 text-white shadow transition-colors"
+            class="p-2 rounded-xl bg-red-600/90 hover:bg-red-600 text-white shadow transition-all active:scale-95 flex items-center justify-center"
             title="Hapus foto"
           >
-            <Trash2 :size="14" />
+            <Trash2 :size="12" />
           </button>
         </div>
+
         <!-- Title overlay -->
         <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2.5 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
           <p class="text-white text-xs font-bold line-clamp-2">{{ item.title }}</p>
@@ -204,7 +209,7 @@ loadGallery()
           v-if="showModal"
           class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-[9997] p-4"
         >
-          <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl">
+          <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl animate-[fade-in_0.2s_ease-out]">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
               <h2 class="text-base font-black text-slate-900">Tambah Foto Galeri</h2>
               <button @click="showModal = false" class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 transition-colors">

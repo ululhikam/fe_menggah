@@ -134,14 +134,16 @@ loadNews()
   <div class="space-y-6 animate-[fade-in_0.4s_ease-out]">
 
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-surface-900">Manajemen Berita</h1>
+        <h1 class="text-2xl font-bold text-surface-900 flex items-center gap-2">
+          <Newspaper :size="24" class="text-green-600" /> Manajemen Berita
+        </h1>
         <p class="text-sm text-surface-500 mt-1">Kelola artikel berita Dusun Menggah.</p>
       </div>
       <button
         @click="openCreate"
-        class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors shadow-sm"
+        class="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm active:scale-95"
       >
         <Plus :size="16" /> Tulis Berita
       </button>
@@ -216,20 +218,20 @@ loadNews()
                 {{ new Date(item.published_at || item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) }}
               </td>
               <td class="py-3.5 px-4 text-right">
-                <div class="flex items-center justify-end gap-1.5">
+                <div class="flex items-center justify-end gap-2">
                   <button
                     @click="openEdit(item)"
-                    class="p-1.5 rounded-lg text-surface-400 hover:text-green-600 hover:bg-green-50 transition-colors"
+                    class="p-1.5 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700 transition-all active:scale-95 flex items-center justify-center"
                     title="Edit"
                   >
-                    <Edit2 :size="15" />
+                    <Edit2 :size="14" />
                   </button>
                   <button
                     @click="deleteTarget = item"
-                    class="p-1.5 rounded-lg text-surface-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                    class="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition-all active:scale-95 flex items-center justify-center"
                     title="Hapus"
                   >
-                    <Trash2 :size="15" />
+                    <Trash2 :size="14" />
                   </button>
                 </div>
               </td>
@@ -246,7 +248,7 @@ loadNews()
           v-if="showModal"
           class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-[9997] p-4"
         >
-          <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl">
+          <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[92vh] overflow-y-auto shadow-2xl animate-[fade-in_0.2s_ease-out]">
             <!-- Header -->
             <div class="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between z-10">
               <h2 class="text-base font-black text-slate-900">

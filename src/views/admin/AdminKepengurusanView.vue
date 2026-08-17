@@ -110,90 +110,156 @@ const orgFilters = () => {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div class="flex items-center justify-between">
+  <div class="space-y-6 animate-[fade-in_0.4s_ease-out]">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-surface-900">Manajemen Kepengurusan</h1>
+        <h1 class="text-2xl font-bold text-surface-900 flex items-center gap-2">
+          <Users :size="24" class="text-green-600" /> Manajemen Kepengurusan
+        </h1>
         <p class="text-sm text-surface-500 mt-1">Kelola anggota pengurus Dusun Menggah.</p>
       </div>
-      <button @click="openCreate" class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors shadow-sm">
+      <button 
+        @click="openCreate" 
+        class="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors shadow-sm active:scale-95"
+      >
         <Plus :size="16" /> Tambah Anggota
       </button>
     </div>
 
     <!-- Filter by org -->
-    <div class="flex gap-1.5 overflow-x-auto pb-1">
+    <div class="flex gap-1.5 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-none">
       <button
         v-for="f in orgFilters()"
         :key="f.value"
         @click="activeFilter = f.value"
-        class="flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold transition-all"
-        :class="activeFilter === f.value ? 'bg-green-600 text-white' : 'bg-white border border-surface-200 text-surface-500 hover:text-surface-900'"
-      >{{ f.label }}</button>
+        class="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all border"
+        :class="activeFilter === f.value ? 'bg-green-600 border-green-600 text-white shadow-sm' : 'bg-white border-surface-200 text-surface-500 hover:text-surface-900 hover:bg-surface-50'"
+      >
+        {{ f.label }}
+      </button>
     </div>
 
     <!-- Members Grid -->
-    <div v-if="loading" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-      <div v-for="i in 8" :key="i" class="card animate-pulse text-center">
-        <div class="w-16 h-16 rounded-full bg-gray-200 mx-auto mb-3"></div>
-        <div class="h-3 bg-gray-200 rounded-full w-3/4 mx-auto"></div>
+    <div v-if="loading" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-2.5">
+      <div v-for="i in 14" :key="i" class="card animate-pulse text-center p-2.5">
+        <div class="w-10 h-10 rounded-full bg-surface-200 mx-auto mb-2"></div>
+        <div class="h-2.5 bg-surface-200 rounded-full w-3/4 mx-auto mb-1.5"></div>
+        <div class="h-2 bg-surface-200 rounded-full w-1/2 mx-auto"></div>
       </div>
     </div>
-    <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    
+    <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-2.5">
       <div
         v-for="member in filteredMembers()"
         :key="member.id"
-        class="card group text-center relative"
+        class="card text-center p-2.5 flex flex-col justify-between hover:border-green-200 hover:shadow-sm transition-all duration-300 min-h-[145px]"
       >
-        <div class="w-16 h-16 rounded-full mx-auto mb-3 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center overflow-hidden border-2 border-green-100">
-          <img v-if="member.photo_url" :src="member.photo_url" :alt="member.name" class="w-full h-full object-cover" />
-          <span v-else class="text-white font-black text-lg">{{ getInitials(member.name) }}</span>
-        </div>
-        <h3 class="font-black text-surface-900 text-sm leading-tight mb-0.5">{{ member.name }}</h3>
-        <p class="text-green-600 text-xs font-semibold mb-1">{{ member.position }}</p>
-        <p v-if="member.organizations?.name" class="text-surface-400 text-[10px]">{{ member.organizations.name }}</p>
+        <!-- Top Section (Avatar & Details) -->
+        <div class="flex flex-col items-center">
+          <!-- Member Photo / Initials -->
+          <div class="w-10 h-10 rounded-full mx-auto mb-2 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center overflow-hidden border border-green-100 shadow-inner">
+            <img v-if="member.photo_url" :src="member.photo_url" :alt="member.name" class="w-full h-full object-cover" />
+            <span v-else class="text-white font-black text-xs">{{ getInitials(member.name) }}</span>
+          </div>
 
-        <!-- Actions (hover) -->
-        <div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button @click="openEdit(member)" class="p-1 rounded-lg bg-white shadow text-surface-400 hover:text-green-600 transition-colors"><Edit2 :size="12" /></button>
-          <button @click="deleteItem(member.id)" :disabled="deleting === member.id" class="p-1 rounded-lg bg-white shadow text-surface-400 hover:text-red-600 transition-colors"><Trash2 :size="12" /></button>
+          <h3 class="font-bold text-surface-900 text-[11px] leading-snug mb-0.5 line-clamp-2 px-0.5" :title="member.name">
+            {{ member.name }}
+          </h3>
+          <p class="text-green-600 text-[9px] font-semibold truncate w-full px-0.5" :title="member.position">
+            {{ member.position }}
+          </p>
+          <p v-if="member.organizations?.name" class="text-surface-400 text-[8px] truncate w-full px-0.5" :title="member.organizations.name">
+            {{ member.organizations.name }}
+          </p>
+        </div>
+
+        <!-- Bottom Action Row (Symmetric, centered, compact) -->
+        <div class="mt-2 pt-1.5 border-t border-surface-100 flex items-center justify-center gap-2">
+          <button 
+            @click="openEdit(member)" 
+            class="p-1.5 rounded-lg bg-green-50 hover:bg-green-100 text-green-700 transition-colors flex items-center justify-center active:scale-95"
+            title="Edit Anggota"
+          >
+            <Edit2 :size="11" />
+          </button>
+          <button 
+            @click="deleteItem(member.id)" 
+            :disabled="deleting === member.id" 
+            class="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 transition-colors flex items-center justify-center active:scale-95 disabled:opacity-50"
+            title="Hapus Anggota"
+          >
+            <Trash2 :size="11" />
+          </button>
         </div>
       </div>
-      <div v-if="!loading && filteredMembers().length === 0" class="col-span-4 py-12 text-center text-surface-400">
+
+      <div v-if="!loading && filteredMembers().length === 0" class="col-span-2 sm:col-span-3 md:col-span-4 lg:col-span-6 xl:col-span-7 py-12 text-center text-surface-400 card">
         <Users :size="32" class="mx-auto mb-3 text-surface-300" />
-        <p>Belum ada anggota</p>
+        <p class="font-medium text-xs">Belum ada anggota kepengurusan.</p>
       </div>
     </div>
 
+    <!-- Modal Form -->
     <Teleport to="body">
-      <div v-if="showModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-          <div class="p-6 border-b border-gray-100">
-            <h2 class="text-lg font-black text-gray-900">{{ editingItem ? 'Edit Anggota' : 'Tambah Anggota' }}</h2>
+      <div v-if="showModal" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl animate-[fade-in_0.2s_ease-out]">
+          <div class="p-6 border-b border-surface-100 flex items-center justify-between">
+            <h2 class="text-base font-black text-surface-900">{{ editingItem ? 'Edit Anggota' : 'Tambah Anggota' }}</h2>
+            <button 
+              @click="showModal = false" 
+              class="p-1.5 rounded-lg text-surface-400 hover:bg-surface-100 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="2 2 20 20" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
           <form @submit.prevent="save" class="p-6 space-y-4">
-            <div class="grid grid-cols-2 gap-3">
-              <div class="col-span-2">
-                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Nama Lengkap</label>
-                <input v-model="form.name" type="text" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Nama Lengkap *</label>
+                <input 
+                  v-model="form.name" 
+                  type="text" 
+                  required 
+                  class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white" 
+                />
               </div>
+              
               <div>
-                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Jabatan</label>
-                <input v-model="form.position" type="text" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500" />
+                <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Jabatan *</label>
+                <input 
+                  v-model="form.position" 
+                  type="text" 
+                  required 
+                  class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white" 
+                />
               </div>
+
               <div>
-                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Organisasi</label>
-                <select v-model="form.organization_id" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500">
+                <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Organisasi</label>
+                <select 
+                  v-model="form.organization_id" 
+                  class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white"
+                >
                   <option value="">— Pilih Organisasi —</option>
                   <option v-for="org in organizations" :key="org.id" :value="org.id">{{ org.name }}</option>
                 </select>
               </div>
-              <div>
-                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">No. HP (opsional)</label>
-                <input v-model="form.phone" type="text" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500" placeholder="08xx..." />
+
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">No. HP (opsional)</label>
+                <input 
+                  v-model="form.phone" 
+                  type="text" 
+                  class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white" 
+                  placeholder="Contoh: 08123456789" 
+                />
               </div>
-              <div>
-                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Foto (opsional)</label>
+
+              <div class="sm:col-span-2">
+                <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Foto (opsional)</label>
                 <ImageUpload
                   v-model="form.photo_url"
                   bucket="media"
@@ -202,18 +268,41 @@ const orgFilters = () => {
                   @error="toast.error($event)"
                 />
               </div>
+
               <div>
-                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Masa Jabatan Mulai</label>
-                <input v-model="form.period_start" type="text" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500" placeholder="2023" />
+                <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Masa Jabatan Mulai</label>
+                <input 
+                  v-model="form.period_start" 
+                  type="text" 
+                  class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white" 
+                  placeholder="Contoh: 2023" 
+                />
               </div>
+
               <div>
-                <label class="block text-xs font-bold text-gray-600 mb-1.5 uppercase tracking-wide">Masa Jabatan Selesai</label>
-                <input v-model="form.period_end" type="text" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-green-500" placeholder="2026 / sekarang" />
+                <label class="block text-xs font-bold text-surface-600 mb-1.5 uppercase tracking-wide">Masa Jabatan Selesai</label>
+                <input 
+                  v-model="form.period_end" 
+                  type="text" 
+                  class="w-full border border-surface-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-white" 
+                  placeholder="Contoh: 2026 atau Sekarang" 
+                />
               </div>
             </div>
-            <div class="flex justify-end gap-3 pt-2">
-              <button type="button" @click="showModal = false" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100">Batal</button>
-              <button type="submit" :disabled="saving" class="px-6 py-2.5 rounded-xl text-sm font-semibold bg-green-600 hover:bg-green-700 text-white disabled:opacity-50">
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-surface-100">
+              <button 
+                type="button" 
+                @click="showModal = false" 
+                class="px-4 py-2.5 rounded-xl text-sm font-semibold text-surface-600 hover:bg-surface-100 transition-colors"
+              >
+                Batal
+              </button>
+              <button 
+                type="submit" 
+                :disabled="saving" 
+                class="px-6 py-2.5 rounded-xl text-sm font-semibold bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 transition-colors shadow-sm active:scale-95"
+              >
                 {{ saving ? 'Menyimpan...' : 'Simpan' }}
               </button>
             </div>
@@ -223,3 +312,4 @@ const orgFilters = () => {
     </Teleport>
   </div>
 </template>
+

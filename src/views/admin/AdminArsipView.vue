@@ -121,7 +121,7 @@ loadNews()
       </div>
       <RouterLink
         to="/admin/berita"
-        class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-colors shadow-sm"
+        class="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm transition-all shadow-sm active:scale-95"
       >
         + Tulis Berita Baru
       </RouterLink>
@@ -138,10 +138,10 @@ loadNews()
           ]"
           :key="f.key"
           @click="activeFilter = f.key as any"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border"
           :class="activeFilter === f.key
-            ? 'bg-green-600 text-white shadow-sm'
-            : 'bg-white border border-surface-200 text-surface-500 hover:text-surface-900'"
+            ? 'bg-green-600 border-green-600 text-white shadow-sm'
+            : 'bg-white border-surface-200 text-surface-500 hover:text-surface-900'"
         >
           {{ f.label }}
           <span
@@ -159,7 +159,7 @@ loadNews()
           v-model="searchQuery"
           type="text"
           placeholder="Cari judul..."
-          class="w-full pl-9 pr-4 py-1.5 border border-surface-200 rounded-xl text-sm focus:outline-none focus:border-green-500"
+          class="w-full pl-9 pr-4 py-1.5 border border-surface-200 rounded-xl text-sm focus:outline-none focus:border-green-500 bg-white"
         />
       </div>
     </div>
@@ -215,20 +215,20 @@ loadNews()
         </div>
 
         <!-- Actions -->
-        <div class="flex items-center gap-1 shrink-0">
+        <div class="flex items-center gap-2 shrink-0">
           <!-- Toggle publish -->
           <button
             @click="togglePublish(item)"
             :disabled="togglingId === item.id"
-            class="p-2 rounded-xl text-surface-400 transition-colors"
+            class="p-1.5 rounded-lg transition-all active:scale-95 flex items-center justify-center"
             :class="item.is_published
-              ? 'hover:bg-slate-100 hover:text-slate-600'
-              : 'hover:bg-green-50 hover:text-green-600'"
+              ? 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              : 'bg-green-50 text-green-600 hover:bg-green-100'"
             :title="item.is_published ? 'Jadikan Draft' : 'Publikasikan'"
           >
             <component
               :is="item.is_published ? EyeOff : Eye"
-              :size="15"
+              :size="14"
               :class="togglingId === item.id ? 'animate-pulse' : ''"
             />
           </button>
@@ -237,19 +237,19 @@ loadNews()
           <a
             :href="`/berita/${item.slug}`"
             target="_blank"
-            class="p-2 rounded-xl text-surface-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+            class="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-all active:scale-95 flex items-center justify-center"
             title="Lihat di Portal"
           >
-            <ExternalLink :size="15" />
+            <ExternalLink :size="14" />
           </a>
 
           <!-- Hapus -->
           <button
             @click="deleteTarget = item"
-            class="p-2 rounded-xl text-surface-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+            class="p-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 transition-all active:scale-95 flex items-center justify-center"
             title="Hapus Permanen"
           >
-            <Trash2 :size="15" />
+            <Trash2 :size="14" />
           </button>
         </div>
       </div>
