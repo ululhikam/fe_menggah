@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
-import { Mail, Lock, LogIn, Eye, EyeOff } from 'lucide-vue-next'
+import { Mail, Lock, LogIn, Eye, EyeOff, ArrowLeft } from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -122,17 +122,22 @@ async function handleLogin() {
               Masuk ke Dashboard
             </template>
           </button>
-
-          <!-- Register Link -->
-          <p class="text-center text-xs text-slate-400 pt-2">
-            Belum memiliki akun?
-            <RouterLink to="/register" class="text-emerald-400 hover:text-emerald-300 font-bold ml-1 transition-colors">Daftar Baru</RouterLink>
-          </p>
         </form>
+
+        <!-- Back to Home Link -->
+        <div class="text-center pt-4 border-t border-white/[0.06] mt-6">
+          <RouterLink 
+            to="/" 
+            class="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-emerald-400 transition-all active:scale-95"
+          >
+            <ArrowLeft :size="14" /> Kembali ke Beranda
+          </RouterLink>
+        </div>
 
       </div>
     </div>
   </div>
+
 </template>
 
 <style scoped>

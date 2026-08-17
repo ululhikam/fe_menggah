@@ -24,9 +24,7 @@ const router = createRouter({
     },
     {
       path: '/register',
-      name: 'Register',
-      component: () => import('@/views/auth/RegisterView.vue'),
-      meta: { title: 'Daftar Akun — Dusun Menggah', guest: true },
+      redirect: '/login'
     },
 
     // 404 catch-all
